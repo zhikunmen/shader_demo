@@ -1,0 +1,64 @@
+class SinShader extends BaseEuiView {
+    constructor() {
+        super();
+    }
+
+
+    protected initUI() {
+        let sky = new eui.Image("bg_jpg");
+        this.addChild(sky);
+        const stage = egret.MainContext.instance.stage;
+        let stageW = stage.stageWidth;
+        let stageH = stage.stageHeight;
+        sky.width = stageW;
+        sky.height = stageH;
+
+        const fragmentSrc =[
+            "precision lowp float;",
+            "varying vec2 vTextureCoord;",
+            "varying vec4 vColor;",
+            "uniform sampler2D uSampler;",
+            "uniform float amplitude;",
+            "uniform float angularVelocity;",
+            "uniform float frequency;",
+            "uniform float offset;",
+            "uniform float iTime;",
+            "void main(void){",
+                "vec4 color = vColor;",
+                "vec4 fg = texture2D(uSampler, vTextureCoord);",
+                "if(fg.a == 0.0) discard;",
+                "vec2 uv = vTextureCoord.xy;",
+                "float initialPhase = frequency * iTime;",
+                "float y = amplitude * sin((angularVelocity * uv.x) + initialPhase) + offset;",
+                "color = uv.y > y ? fg : fg * 0.3;",
+                "gl_FragColor = color;",
+            "}"
+        ].join('\n');
+        let customFilter = new egret.CustomFilter(this.vertexSrc, fragmentSrc, {
+            amplitude: 0.1,//振幅
+            angularVelocity: 10.0,//角速度
+            frequency: 10.0,//频率
+            offset: 0.4,//偏距
+            iTime: 0.0//时间
+        })
+        let ts = 0;
+        egret.startTick((timeStamp) => {
+            customFilter.uniforms.iTime += (timeStamp - ts) / 1000;
+            ts = timeStamp;
+            customFilter.uniforms.offset -= 0.005;
+            if (customFilter.uniforms.offset <= 0) {
+                customFilter.uniforms.offset = 1;
+            }
+            return false;
+        }, this)
+        const img = new eui.Image('resource/assets/loding_candy.png')
+        this.addChild(img);
+        img.filters = [customFilter];
+        img.pos(150, 400);
+
+
+        const img1 = new eui.Image('resource/assets/loding_candy.png')
+        this.addChild(img1);
+        img1.pos(150, 600);
+    }
+}
