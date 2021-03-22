@@ -9422,93 +9422,6 @@ interface PlayerOption {
      */
     textureScaleFactor?: number;
 }
-declare namespace egret.sys {
-    /**
-     * @private
-     * 共享的用于碰撞检测的渲染缓冲
-     */
-    let customHitTestBuffer: sys.RenderBuffer;
-    /**
-     * @private
-     * 共享的用于canvas碰撞检测的渲染缓冲
-     */
-    let canvasHitTestBuffer: sys.RenderBuffer;
-    /**
-     * @private
-     * 渲染缓冲
-     */
-    interface RenderBuffer {
-        /**
-         * 呈现最终绘图结果的画布。
-         * @readOnly
-         */
-        surface: any;
-        /**
-         * 渲染上下文。
-         * @readOnly
-         */
-        context: any;
-        /**
-         * 渲染缓冲的宽度，以像素为单位。
-         * @readOnly
-         */
-        width: number;
-        /**
-         * 渲染缓冲的高度，以像素为单位。
-         * @readOnly
-         */
-        height: number;
-        /**
-         * 改变渲染缓冲的大小并清空缓冲区
-         * @param width 改变后的宽
-         * @param height 改变后的高
-         * @param useMaxSize 若传入true，则将改变后的尺寸与已有尺寸对比，保留较大的尺寸。
-         */
-        resize(width: number, height: number, useMaxSize?: boolean): void;
-        /**
-         * 获取指定区域的像素
-         */
-        getPixels(x: number, y: number, width?: number, height?: number): number[];
-        /**
-         * 转换成base64字符串，如果图片（或者包含的图片）跨域，则返回null
-         * @param type 转换的类型，如: "image/png","image/jpeg"
-         */
-        toDataURL(type?: string, ...args: any[]): string;
-        /**
-         * 清空缓冲区数据
-         */
-        clear(): void;
-        /**
-         * 销毁渲染缓冲
-         */
-        destroy(): void;
-    }
-    /**
-     * @private
-     */
-    let RenderBuffer: {
-        /**
-         * 创建一个RenderTarget。
-         * 注意：若内存不足或创建缓冲区失败，将会抛出错误异常。
-         * @param width 渲染缓冲的初始宽
-         * @param height 渲染缓冲的初始高
-         * @param root 是否为舞台buffer
-         */
-        new (width?: number, height?: number, root?: boolean): RenderBuffer;
-    };
-    /**
-     * @private
-     */
-    let CanvasRenderBuffer: {
-        /**
-         * 创建一个CanvasRenderBuffer。
-         * 注意：若内存不足或创建缓冲区失败，将会抛出错误异常。
-         * @param width 渲染缓冲的初始宽
-         * @param height 渲染缓冲的初始高
-         */
-        new (width?: number, height?: number): RenderBuffer;
-    };
-}
 declare namespace egret {
     /** !!!!!!!!inspired by Babylon.js!!!!!!!!!!!!!
      * for description see https://www.khronos.org/opengles/sdk/tools/KTX/
@@ -9594,6 +9507,29 @@ declare namespace egret {
          */
         uploadLevels(bitmapData: egret.BitmapData, loadMipmaps: boolean): void;
         private _upload2DCompressedLevels(bitmapData, loadMipmaps);
+    }
+}
+declare namespace egret.sys {
+    /**
+     * @private
+     * 设备屏幕
+     */
+    interface Screen {
+        /**
+         * @private
+         * 更新屏幕视口尺寸
+         */
+        updateScreenSize(): any;
+        /**
+         * @private
+         * 更新触摸数量
+         */
+        updateMaxTouches(): any;
+        /**
+         * @private
+         * 设置分辨率尺寸
+         */
+        setContentSize(width: number, height: number): any;
     }
 }
 declare namespace egret.sys {
@@ -11006,67 +10942,6 @@ declare namespace egret {
          * 移除自身
          */
         removeSelf(): DisplayObject;
-    }
-}
-declare namespace egret.web {
-    class ShopeeAudioSound extends egret.EventDispatcher implements Sound {
-        /**
-         * jsBridge返回的playerId 后续使用这种这个playerId播放
-         */
-        playerId: string;
-        type: string;
-        private loaded;
-        readonly length: number;
-        private url;
-        load(url: string): void;
-        /**
-         * 播放开始时间
-         * @param startTime 播放开始时间 jsBridge暂不支持
-         * 播放次数，默认值是 0，循环播放。 大于 0 为播放次数，如 1 为播放 1 次；小于等于 0，为循环播放。
-         */
-        play(startTime?: number, loops?: number): SoundChannel;
-        /**关闭 */
-        close(): void;
-    }
-    class ShopeeAudioSoundChannel extends egret.EventDispatcher implements egret.SoundChannel {
-        private _volume;
-        $playerId: string;
-        /**
-         * 当播放声音时，position 属性表示声音文件中当前播放的位置（以秒为单位）
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @readOnly
-         * @language zh_CN
-         */
-        position: number;
-        /**音量 */
-        volume: number;
-        $loops: number;
-        /**
-         *
-         * @param startTime 若有开始时间 则认为是resume， native暂未提供按照时间播放的接口
-         */
-        $play(startTime?: number): void;
-        /**
-         * @private
-         */
-        private onPlayEnd;
-        /**暂停音乐 */
-        stop(): void;
-    }
-    /**停止所有jsbridge音频 */
-    function stopAllShopeeAudio(): void;
-    /**https://confluence.shopee.io/display/SPAT/%5BBeta%5DaudioPlay+Bridge */
-    enum ShopeeAudioPlayType {
-        KEEP = 0,
-        PLAYLOOP = 1,
-        PLAY = 2,
-        PAUSE = 3,
-        RESUME = 4,
-        STOP = 5,
-        EMITPLAY = 6,
-        REWINDEMITPLAY = 7,
-        DUPLICATETRACKPLAY = 8,
     }
 }
 declare namespace egret.sys {
@@ -15484,23 +15359,87 @@ declare namespace egret {
 declare namespace egret.sys {
     /**
      * @private
-     * 设备屏幕
+     * 共享的用于碰撞检测的渲染缓冲
      */
-    interface Screen {
+    let customHitTestBuffer: sys.RenderBuffer;
+    /**
+     * @private
+     * 共享的用于canvas碰撞检测的渲染缓冲
+     */
+    let canvasHitTestBuffer: sys.RenderBuffer;
+    /**
+     * @private
+     * 渲染缓冲
+     */
+    interface RenderBuffer {
         /**
-         * @private
-         * 更新屏幕视口尺寸
+         * 呈现最终绘图结果的画布。
+         * @readOnly
          */
-        updateScreenSize(): any;
+        surface: any;
         /**
-         * @private
-         * 更新触摸数量
+         * 渲染上下文。
+         * @readOnly
          */
-        updateMaxTouches(): any;
+        context: any;
         /**
-         * @private
-         * 设置分辨率尺寸
+         * 渲染缓冲的宽度，以像素为单位。
+         * @readOnly
          */
-        setContentSize(width: number, height: number): any;
+        width: number;
+        /**
+         * 渲染缓冲的高度，以像素为单位。
+         * @readOnly
+         */
+        height: number;
+        /**
+         * 改变渲染缓冲的大小并清空缓冲区
+         * @param width 改变后的宽
+         * @param height 改变后的高
+         * @param useMaxSize 若传入true，则将改变后的尺寸与已有尺寸对比，保留较大的尺寸。
+         */
+        resize(width: number, height: number, useMaxSize?: boolean): void;
+        /**
+         * 获取指定区域的像素
+         */
+        getPixels(x: number, y: number, width?: number, height?: number): number[];
+        /**
+         * 转换成base64字符串，如果图片（或者包含的图片）跨域，则返回null
+         * @param type 转换的类型，如: "image/png","image/jpeg"
+         */
+        toDataURL(type?: string, ...args: any[]): string;
+        /**
+         * 清空缓冲区数据
+         */
+        clear(): void;
+        /**
+         * 销毁渲染缓冲
+         */
+        destroy(): void;
     }
+    /**
+     * @private
+     */
+    let RenderBuffer: {
+        /**
+         * 创建一个RenderTarget。
+         * 注意：若内存不足或创建缓冲区失败，将会抛出错误异常。
+         * @param width 渲染缓冲的初始宽
+         * @param height 渲染缓冲的初始高
+         * @param root 是否为舞台buffer
+         */
+        new (width?: number, height?: number, root?: boolean): RenderBuffer;
+    };
+    /**
+     * @private
+     */
+    let CanvasRenderBuffer: {
+        /**
+         * 创建一个CanvasRenderBuffer。
+         * 注意：若内存不足或创建缓冲区失败，将会抛出错误异常。
+         * @param width 渲染缓冲的初始宽
+         * @param height 渲染缓冲的初始高
+         */
+        new (width?: number, height?: number): RenderBuffer;
+    };
 }

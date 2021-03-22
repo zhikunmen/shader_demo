@@ -87,118 +87,6 @@ declare namespace RES {
         new (): VersionController;
     };
 }
-declare module RES.processor {
-    var SoundProcessor: Processor;
-}
-declare module RES {
-    var useIosBridge: boolean;
-    /**是否支持ios bridge音频播放 */
-    function isSupportIosAudioBridge(): boolean | null;
-}
-declare module RES {
-}
-declare module RES {
-    /**
-     * @class RES.ResourceLoader
-     * @classdesc
-     * @private
-     */
-    class ResourceLoader {
-        /**
-         * 当前组加载的项总个数,key为groupName
-         */
-        private groupTotalDic;
-        /**
-         * 已经加载的项个数,key为groupName
-         */
-        private numLoadedDic;
-        /**
-         * 加载失败的组,key为groupName
-         */
-        private groupErrorDic;
-        private retryTimesDic;
-        maxRetryTimes: number;
-        private reporterDic;
-        private dispatcherDic;
-        private failedList;
-        private loadItemErrorDic;
-        private errorDic;
-        /**
-         * 资源优先级队列，key为资源，value为优先级
-         */
-        private itemListPriorityDic;
-        /**
-         * 资源是否在加载
-         */
-        private itemLoadDic;
-        private promiseHash;
-        /**
-         * 延迟加载队列,getResByUrl ,getResAsync等方法存储队列
-         */
-        private lazyLoadList;
-        pushResItem(resInfo: ResourceInfo): Promise<any>;
-        /**
-         * 加载队列,存储组的队列
-         */
-        pushResGroup(list: ResourceInfo[], groupName: string, priority: number, reporter?: PromiseTaskReporter): Promise<any>;
-        /**
-         * 更新组的优先级顺序
-         * @param list 存储数据的队列
-         * @param priority 优先级
-         */
-        private updatelistPriority(list, priority);
-        /**
-         * 搜索单项资源的优先级
-         * @param item 单项资源
-         */
-        private findPriorityInDic(item);
-        private loadingCount;
-        /**
-         * 最大线程数目
-         */
-        thread: number;
-        /**
-         * 加载下一项资源，线程控制
-         */
-        private loadNextResource();
-        /**
-         * 加载单向资源
-         */
-        private loadSingleResource();
-        /**
-         * 获取下一个待加载项
-         */
-        private getOneResourceInfoInGroup();
-        /**
-         * 设置组的加载进度，同时返回当前组是否加载完成
-         * @param groupName 组名
-         * @param r 加载完成的资源
-         */
-        private setGroupProgress(groupName, r);
-        /**
-         * 加载组的最后一项，同时派发事件
-         * @param groupName 组名
-         * @param lastError 最后一项是否成功，此项为错误信息
-         */
-        private loadGroupEnd(groupName, lastError?);
-        /**
-         * 删除事件派发器，Promise的缓存，返回事件派发器
-         * @param groupName 组名或是root+name
-         */
-        private deleteDispatcher(groupName);
-        /**
-         * 加载资源
-         * @param r 资源信息
-         * @param p 加载处理器
-         */
-        private loadResource(r, p?);
-        /**
-         * 释放资源
-         * @param r 资源信息
-         */
-        unloadResource(r: ResourceInfo): boolean;
-    }
-}
 declare type ResourceRootSelector<T extends string> = () => T;
 declare type ResourceNameSelector = (file: string) => string;
 declare type ResourceMergerSelector = (file: string) => {
@@ -312,40 +200,127 @@ declare module RES {
 }
 declare module RES {
     /**
-     * assetsManager underlying storage resource information
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language en_US
+     * @class RES.ResourceLoader
+     * @classdesc
+     * @private
      */
+    class ResourceLoader {
+        /**
+         * 当前组加载的项总个数,key为groupName
+         */
+        private groupTotalDic;
+        /**
+         * 已经加载的项个数,key为groupName
+         */
+        private numLoadedDic;
+        /**
+         * 加载失败的组,key为groupName
+         */
+        private groupErrorDic;
+        private retryTimesDic;
+        maxRetryTimes: number;
+        private reporterDic;
+        private dispatcherDic;
+        private failedList;
+        private loadItemErrorDic;
+        private errorDic;
+        /**
+         * 资源优先级队列，key为资源，value为优先级
+         */
+        private itemListPriorityDic;
+        /**
+         * 资源是否在加载
+         */
+        private itemLoadDic;
+        private promiseHash;
+        /**
+         * 延迟加载队列,getResByUrl ,getResAsync等方法存储队列
+         */
+        private lazyLoadList;
+        pushResItem(resInfo: ResourceInfo): Promise<any>;
+        /**
+         * 加载队列,存储组的队列
+         */
+        pushResGroup(list: ResourceInfo[], groupName: string, priority: number, reporter?: PromiseTaskReporter): Promise<any>;
+        /**
+         * 更新组的优先级顺序
+         * @param list 存储数据的队列
+         * @param priority 优先级
+         */
+        private updatelistPriority(list, priority);
+        /**
+         * 搜索单项资源的优先级
+         * @param item 单项资源
+         */
+        private findPriorityInDic(item);
+        private loadingCount;
+        /**
+         * 最大线程数目
+         */
+        thread: number;
+        /**
+         * 加载下一项资源，线程控制
+         */
+        private loadNextResource();
+        /**
+         * 加载单向资源
+         */
+        private loadSingleResource();
+        /**
+         * 获取下一个待加载项
+         */
+        private getOneResourceInfoInGroup();
+        /**
+         * 设置组的加载进度，同时返回当前组是否加载完成
+         * @param groupName 组名
+         * @param r 加载完成的资源
+         */
+        private setGroupProgress(groupName, r);
+        /**
+         * 加载组的最后一项，同时派发事件
+         * @param groupName 组名
+         * @param lastError 最后一项是否成功，此项为错误信息
+         */
+        private loadGroupEnd(groupName, lastError?);
+        /**
+         * 删除事件派发器，Promise的缓存，返回事件派发器
+         * @param groupName 组名或是root+name
+         */
+        private deleteDispatcher(groupName);
+        /**
+         * 加载资源
+         * @param r 资源信息
+         * @param p 加载处理器
+         */
+        private loadResource(r, p?);
+        /**
+         * 释放资源
+         * @param r 资源信息
+         */
+        unloadResource(r: ResourceInfo): boolean;
+    }
+}
+declare module RES {
+}
+declare module RES {
     /**
-     * assetsManager底层存储资源信息
+     * 加载配置文件数据并解析。
+     * @param data 资源配置数据
+     * @param resourceRoot 资源配置的根地址
+     * @returns Promise
+     * @see #setMaxRetryTimes
      * @version Egret 5.2
      * @platform Web,Native
      * @language zh_CN
      */
-    interface File {
-        url: string;
-        type: string;
-        name: string;
-        root: string;
-    }
-    /**
-    * @private
-    */
-    interface FileSystem {
-        addFile(data: {
-            name: string;
-            type: string;
-            url: string;
-            root?: string;
-            extra?: 1 | undefined;
-        }): any;
-        getFile(filename: string): File | null;
-        profile(): void;
-        removeFile(filename: string): any;
-    }
+    function loadConfigByData(data: RES.processor.LegacyResourceConfig, root: string): processor.LegacyResourceConfig | undefined;
 }
 declare module RES {
+    interface ResourceConfig {
+        initConfigByData(root: string): any;
+    }
+}
+declare namespace RES {
     /**
      * Print the memory occupied by the picture.
      * @version Egret 5.2
@@ -353,81 +328,61 @@ declare module RES {
      * @language en_US
      */
     /**
-     * 打印图片所占内存
+     * 对文件路径的一些操作，针对的是 C:/A/B/C/D/example.ts这种格式
      * @version Egret 5.2
      * @platform Web,Native
      * @language zh_CN
      */
-    function profile(): any;
-    /**
-    * @private
-    */
-    interface ProcessHost {
-        state: {
-            [index: string]: number;
-        };
-        resourceConfig: ResourceConfig;
-        load: (resource: ResourceInfo, processor?: string | processor.Processor) => Promise<any>;
-        unload: (resource: ResourceInfo) => void;
-        save: (rexource: ResourceInfo, data: any) => void;
-        get: (resource: ResourceInfo) => any;
-        remove: (resource: ResourceInfo) => void;
-    }
-    /**
-    * @private
-    */
-    class ResourceManagerError extends Error {
-        static errorMessage: {
-            1001: string;
-            1002: string;
-            2001: string;
-            2002: string;
-            2003: string;
-            2004: string;
-            2005: string;
-            2006: string;
-        };
+    namespace path {
         /**
-         * why instanceof e  != ResourceManagerError ???
-         * see link : https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
-         */
-        private __resource_manager_error__;
-        constructor(code: number, replacer?: Object, replacer2?: Object);
-    }
-}
-declare namespace RES {
-    /**
-     * Resource group loading progress prompt
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language en_US
-     */
-    /**
-     * 资源组的加载进度提示
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    interface PromiseTaskReporter {
-        /**
-         * Progress callback, asynchronous execution, load number and order have nothing to do
-         * @param current The number of currently loaded
-         * @param total Total resources required in the current resource bundle
-         * @param resItem currently loading resource information
+         * Format the file path,"C:/A/B//C//D//example.ts"=>"C:/A/B/C/D/example.ts"
+         * @param filename Incoming file path
          * @version Egret 5.2
          * @platform Web,Native
          * @language en_US
          */
         /**
-         * 进度回调，异步执行，加载数目和顺序无关
-         * @param current 当前已经加载数目
-         * @param total 当前资源包内需要资源总数
-         * @param resItem 当前加载资源信息
+         * 格式化文件路径，"C:/A/B//C//D//example.ts"=>"C:/A/B/C/D/example.ts"
+         * @param filename 传入的文件路径
          * @version Egret 5.2
          * @platform Web,Native
          * @language zh_CN
          */
-        onProgress?(current: number, total: number, resItem: ResourceInfo | undefined): void;
+        function normalize(filename: string): string;
+        /**
+         * Get the file name according to the file path, "C:/A/B/example.ts"=>"example.ts"
+         * @param filename Incoming file path
+         * @return File name
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 根据文件路径得到文件名字，"C:/A/B/example.ts"=>"example.ts"
+         * @param filename 传入的文件路径
+         * @return 文件的名字
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        function basename(filename: string): string;
+        /**
+         * The path to the folder where the file is located,"C:/A/B/example.ts"=>"C:/A/B"
+         * @param filename Incoming file path
+         * @return The address of the folder where the file is located
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 文件所在文件夹路径，"C:/A/B/example.ts"=>"C:/A/B"
+         * @param filename 传入的文件路径
+         * @return 文件所在文件夹的地址
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        function dirname(path: string): string;
     }
 }
 declare namespace RES {
@@ -440,6 +395,117 @@ declare namespace RES {
         getVirtualUrl(url: string): string;
         private getLocalData(filePath);
     }
+}
+declare module RES.processor {
+    interface Processor {
+        /**
+         * Start loading a single resource
+         * @param host Load the processor, you can use the processor to load resources, directly use http to get the resources back
+         * @param resource Resource information
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 开始加载单项资源
+         * @param host 加载处理器，可以不使用这个处理器加载资源，直接用http获取资源返回即可
+         * @param resource 资源的信息
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
+        /**
+         * Remove a single resource, usually call host.unload (resource);
+         * @param host Load the processor
+         * @param resource Resource information
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 移除单项资源，一般调用host.unload(resource);
+         * @param host 加载处理器
+         * @param resource 资源的信息
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        onRemoveStart(host: ProcessHost, resource: ResourceInfo): void;
+        /**
+        * Get the submap of the merged atlas
+        * @param host Load the processor
+        * @param resource Resource information
+        * @param key The key value of the resource
+        * @param subkey  Collection of subset names
+        * @version Egret 5.2
+        * @platform Web,Native
+        * @language en_US
+        */
+        /**
+         * 获取合并图集的子图
+         * @param host 加载处理器
+         * @param resource 资源的信息
+         * @param key 资源的key值
+         * @param subkey  子集名称的集合
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        getData?(host: ProcessHost, resource: ResourceInfo, key: string, subkey: string): any;
+    }
+    /**
+     * Register the processor that loads the resource
+     * @param type Load resource type
+     * @param processor Loaded processor, an instance that implements the Processor interface
+     * @version Egret 5.2
+     * @platform Web,Native
+     * @language en_US
+     */
+    /**
+     * 注册加载资源的处理器
+     * @param type 加载资源类型
+     * @param processor 加载的处理器，一个实现Processor接口的实例
+     * @version Egret 5.2
+     * @platform Web,Native
+     * @language zh_CN
+     */
+    function map(type: string, processor: Processor): void;
+    /**
+     * @private
+     * @param url
+     * @param file
+     */
+    function getRelativePath(url: string, file: string): string;
+    var ImageProcessor: Processor;
+    const KTXTextureProcessor: RES.processor.Processor;
+    /**
+    *
+    */
+    function makeEtc1SeperatedAlphaResourceInfo(resource: ResourceInfo): ResourceInfo;
+    /**
+    *
+    */
+    const ETC1KTXProcessor: Processor;
+    var BinaryProcessor: Processor;
+    var TextProcessor: Processor;
+    var JsonProcessor: Processor;
+    var SoundProcessor: Processor;
+    type LegacyResourceConfig = {
+        groups: LegacyGroupInfo[];
+        resources: LegacyResourceInfo[];
+    };
+    type LegacyGroupInfo = {
+        keys: string;
+        name: string;
+    };
+    type LegacyResourceInfo = {
+        name: string;
+        type: string;
+        url: string;
+        subkeys?: string;
+        extra?: 1 | undefined;
+    };
 }
 declare module RES {
     /**
@@ -786,69 +852,39 @@ declare module RES {
         soundType?: string;
     }
 }
-declare namespace RES {
+declare module RES {
     /**
-     * Print the memory occupied by the picture.
+     * assetsManager underlying storage resource information
      * @version Egret 5.2
      * @platform Web,Native
      * @language en_US
      */
     /**
-     * 对文件路径的一些操作，针对的是 C:/A/B/C/D/example.ts这种格式
+     * assetsManager底层存储资源信息
      * @version Egret 5.2
      * @platform Web,Native
      * @language zh_CN
      */
-    namespace path {
-        /**
-         * Format the file path,"C:/A/B//C//D//example.ts"=>"C:/A/B/C/D/example.ts"
-         * @param filename Incoming file path
-         * @version Egret 5.2
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 格式化文件路径，"C:/A/B//C//D//example.ts"=>"C:/A/B/C/D/example.ts"
-         * @param filename 传入的文件路径
-         * @version Egret 5.2
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        function normalize(filename: string): string;
-        /**
-         * Get the file name according to the file path, "C:/A/B/example.ts"=>"example.ts"
-         * @param filename Incoming file path
-         * @return File name
-         * @version Egret 5.2
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 根据文件路径得到文件名字，"C:/A/B/example.ts"=>"example.ts"
-         * @param filename 传入的文件路径
-         * @return 文件的名字
-         * @version Egret 5.2
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        function basename(filename: string): string;
-        /**
-         * The path to the folder where the file is located,"C:/A/B/example.ts"=>"C:/A/B"
-         * @param filename Incoming file path
-         * @return The address of the folder where the file is located
-         * @version Egret 5.2
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 文件所在文件夹路径，"C:/A/B/example.ts"=>"C:/A/B"
-         * @param filename 传入的文件路径
-         * @return 文件所在文件夹的地址
-         * @version Egret 5.2
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        function dirname(path: string): string;
+    interface File {
+        url: string;
+        type: string;
+        name: string;
+        root: string;
+    }
+    /**
+    * @private
+    */
+    interface FileSystem {
+        addFile(data: {
+            name: string;
+            type: string;
+            url: string;
+            root?: string;
+            extra?: 1 | undefined;
+        }): any;
+        getFile(filename: string): File | null;
+        profile(): void;
+        removeFile(filename: string): any;
     }
 }
 declare module RES {
@@ -1434,129 +1470,86 @@ declare module RES {
 }
 declare module RES {
     /**
-     * 加载配置文件数据并解析。
-     * @param data 资源配置数据
-     * @param resourceRoot 资源配置的根地址
-     * @returns Promise
-     * @see #setMaxRetryTimes
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    function loadConfigByData(data: RES.processor.LegacyResourceConfig, root: string): processor.LegacyResourceConfig | undefined;
-}
-declare module RES {
-    interface ResourceConfig {
-        initConfigByData(root: string): any;
-    }
-}
-declare module RES.processor {
-    interface Processor {
-        /**
-         * Start loading a single resource
-         * @param host Load the processor, you can use the processor to load resources, directly use http to get the resources back
-         * @param resource Resource information
-         * @version Egret 5.2
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 开始加载单项资源
-         * @param host 加载处理器，可以不使用这个处理器加载资源，直接用http获取资源返回即可
-         * @param resource 资源的信息
-         * @version Egret 5.2
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        onLoadStart(host: ProcessHost, resource: ResourceInfo): Promise<any>;
-        /**
-         * Remove a single resource, usually call host.unload (resource);
-         * @param host Load the processor
-         * @param resource Resource information
-         * @version Egret 5.2
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 移除单项资源，一般调用host.unload(resource);
-         * @param host 加载处理器
-         * @param resource 资源的信息
-         * @version Egret 5.2
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        onRemoveStart(host: ProcessHost, resource: ResourceInfo): void;
-        /**
-        * Get the submap of the merged atlas
-        * @param host Load the processor
-        * @param resource Resource information
-        * @param key The key value of the resource
-        * @param subkey  Collection of subset names
-        * @version Egret 5.2
-        * @platform Web,Native
-        * @language en_US
-        */
-        /**
-         * 获取合并图集的子图
-         * @param host 加载处理器
-         * @param resource 资源的信息
-         * @param key 资源的key值
-         * @param subkey  子集名称的集合
-         * @version Egret 5.2
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        getData?(host: ProcessHost, resource: ResourceInfo, key: string, subkey: string): any;
-    }
-    /**
-     * Register the processor that loads the resource
-     * @param type Load resource type
-     * @param processor Loaded processor, an instance that implements the Processor interface
+     * Print the memory occupied by the picture.
      * @version Egret 5.2
      * @platform Web,Native
      * @language en_US
      */
     /**
-     * 注册加载资源的处理器
-     * @param type 加载资源类型
-     * @param processor 加载的处理器，一个实现Processor接口的实例
+     * 打印图片所占内存
      * @version Egret 5.2
      * @platform Web,Native
      * @language zh_CN
      */
-    function map(type: string, processor: Processor): void;
+    function profile(): any;
     /**
-     * @private
-     * @param url
-     * @param file
+    * @private
+    */
+    interface ProcessHost {
+        state: {
+            [index: string]: number;
+        };
+        resourceConfig: ResourceConfig;
+        load: (resource: ResourceInfo, processor?: string | processor.Processor) => Promise<any>;
+        unload: (resource: ResourceInfo) => void;
+        save: (rexource: ResourceInfo, data: any) => void;
+        get: (resource: ResourceInfo) => any;
+        remove: (resource: ResourceInfo) => void;
+    }
+    /**
+    * @private
+    */
+    class ResourceManagerError extends Error {
+        static errorMessage: {
+            1001: string;
+            1002: string;
+            2001: string;
+            2002: string;
+            2003: string;
+            2004: string;
+            2005: string;
+            2006: string;
+        };
+        /**
+         * why instanceof e  != ResourceManagerError ???
+         * see link : https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
+         */
+        private __resource_manager_error__;
+        constructor(code: number, replacer?: Object, replacer2?: Object);
+    }
+}
+declare namespace RES {
+    /**
+     * Resource group loading progress prompt
+     * @version Egret 5.2
+     * @platform Web,Native
+     * @language en_US
      */
-    function getRelativePath(url: string, file: string): string;
-    var ImageProcessor: Processor;
-    const KTXTextureProcessor: RES.processor.Processor;
     /**
-    *
-    */
-    function makeEtc1SeperatedAlphaResourceInfo(resource: ResourceInfo): ResourceInfo;
-    /**
-    *
-    */
-    const ETC1KTXProcessor: Processor;
-    var BinaryProcessor: Processor;
-    var TextProcessor: Processor;
-    var JsonProcessor: Processor;
-    type LegacyResourceConfig = {
-        groups: LegacyGroupInfo[];
-        resources: LegacyResourceInfo[];
-    };
-    type LegacyGroupInfo = {
-        keys: string;
-        name: string;
-    };
-    type LegacyResourceInfo = {
-        name: string;
-        type: string;
-        url: string;
-        subkeys?: string;
-        extra?: 1 | undefined;
-    };
+     * 资源组的加载进度提示
+     * @version Egret 5.2
+     * @platform Web,Native
+     * @language zh_CN
+     */
+    interface PromiseTaskReporter {
+        /**
+         * Progress callback, asynchronous execution, load number and order have nothing to do
+         * @param current The number of currently loaded
+         * @param total Total resources required in the current resource bundle
+         * @param resItem currently loading resource information
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 进度回调，异步执行，加载数目和顺序无关
+         * @param current 当前已经加载数目
+         * @param total 当前资源包内需要资源总数
+         * @param resItem 当前加载资源信息
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        onProgress?(current: number, total: number, resItem: ResourceInfo | undefined): void;
+    }
 }

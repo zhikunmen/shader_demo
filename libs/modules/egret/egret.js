@@ -14294,40 +14294,6 @@ var egret;
 //////////////////////////////////////////////////////////////////////////////////////
 var egret;
 (function (egret) {
-    var sys;
-    (function (sys) {
-    })(sys = egret.sys || (egret.sys = {}));
-})(egret || (egret = {}));
-//////////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (c) 2014-present, Egret Technology.
-//  All rights reserved.
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the Egret nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
-//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-//////////////////////////////////////////////////////////////////////////////////////
-var egret;
-(function (egret) {
     /** !!!!!!!!inspired by Babylon.js!!!!!!!!!!!!!
      * for description see https://www.khronos.org/opengles/sdk/tools/KTX/
      * for file layout see https://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/
@@ -14457,6 +14423,34 @@ var egret;
     egret.KTXContainer = KTXContainer;
     __reflect(KTXContainer.prototype, "egret.KTXContainer");
 })(egret || (egret = {}));
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (c) 2014-present, Egret Technology.
+//  All rights reserved.
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the Egret nor the
+//       names of its contributors may be used to endorse or promote products
+//       derived from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
+//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright (c) 2014-present, Egret Technology.
@@ -18024,260 +18018,6 @@ Object.defineProperty(egret.DisplayObject.prototype, "anchorPercentY", {
     enumerable: true,
     configurable: true
 });
-var egret;
-(function (egret) {
-    var web;
-    (function (web) {
-        var shopeeAudioMap = {};
-        var shopeeAudioStatusMap = {};
-        var ShopeeAudioSound = (function (_super) {
-            __extends(ShopeeAudioSound, _super);
-            function ShopeeAudioSound() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
-                _this.loaded = false;
-                return _this;
-            }
-            Object.defineProperty(ShopeeAudioSound.prototype, "length", {
-                get: function () {
-                    return 0;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            ShopeeAudioSound.prototype.load = function (url) {
-                var self = this;
-                self.url = url;
-                loadAudio(url).then(function (playerId) {
-                    self.loaded = true;
-                    self.playerId = playerId;
-                    self.dispatchEventWith(egret.Event.COMPLETE);
-                }).catch(function (error) {
-                    self.loaded = false;
-                    self.dispatchEventWith(egret.IOErrorEvent.IO_ERROR);
-                    Promise.reject(error + " url:" + self.url);
-                });
-            };
-            /**
-             * 播放开始时间
-             * @param startTime 播放开始时间 jsBridge暂不支持
-             * 播放次数，默认值是 0，循环播放。 大于 0 为播放次数，如 1 为播放 1 次；小于等于 0，为循环播放。
-             */
-            ShopeeAudioSound.prototype.play = function (startTime, loops) {
-                if (true && this.loaded == false) {
-                    egret.$error(1049);
-                }
-                var channel = new ShopeeAudioSoundChannel();
-                channel.$playerId = this.playerId;
-                channel.$loops = loops;
-                channel.$play(startTime);
-                return channel;
-            };
-            /**关闭 */
-            ShopeeAudioSound.prototype.close = function () {
-            };
-            return ShopeeAudioSound;
-        }(egret.EventDispatcher));
-        web.ShopeeAudioSound = ShopeeAudioSound;
-        __reflect(ShopeeAudioSound.prototype, "egret.web.ShopeeAudioSound", ["egret.Sound"]);
-        var ShopeeAudioSoundChannel = (function (_super) {
-            __extends(ShopeeAudioSoundChannel, _super);
-            function ShopeeAudioSoundChannel() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
-                _this._volume = 1;
-                _this.$loops = 0;
-                /**
-                 * @private
-                 */
-                _this.onPlayEnd = function () {
-                    if (_this.$loops == 1) {
-                        _this.stop();
-                        _this.dispatchEventWith(egret.Event.SOUND_COMPLETE);
-                        return;
-                    }
-                    if (_this.$loops > 0) {
-                        _this.$loops--;
-                    }
-                    /////////////
-                    _this.$play();
-                };
-                return _this;
-            }
-            Object.defineProperty(ShopeeAudioSoundChannel.prototype, "volume", {
-                get: function () {
-                    return this._volume;
-                },
-                /**音量 */
-                set: function (num) {
-                    if (this._volume !== num) {
-                        playAudio(this.$playerId, ShopeeAudioPlayType.KEEP, num);
-                        this._volume = num;
-                    }
-                },
-                enumerable: true,
-                configurable: true
-            });
-            /**
-             *
-             * @param startTime 若有开始时间 则认为是resume， native暂未提供按照时间播放的接口
-             */
-            ShopeeAudioSoundChannel.prototype.$play = function (startTime) {
-                var playerId = this.$playerId;
-                if (shopeeAudioStatusMap[playerId] === ShopeeAudioPlayType.PAUSE) {
-                    playAudio(playerId, ShopeeAudioPlayType.RESUME, 1);
-                }
-                else {
-                    // let now = Date.now();
-                    // if (this.$loops > 0) {
-                    // // 1, define handler: please refer to https://confluence.shopee.io/pages/viewpage.action?pageId=72990141
-                    // window['bridgeRegisterHandler']('AUDIO_PLAYBACK_OBSERVE', (e) => {
-                    //     console.warn(e);
-                    // });
-                    // // 2, enable subscription for a player
-                    // window['bridgeCallHandler']('audioPlayObserve', { playerId, enablePublish: true }, function (e) {
-                    //     console.error('delay:  ' + (Date.now() - now));
-                    //     console.info(e);
-                    // });
-                    // }
-                    playAudio(playerId, this.$loops <= 0 ? ShopeeAudioPlayType.PLAYLOOP : ShopeeAudioPlayType.DUPLICATETRACKPLAY, this.volume).then(function () {
-                    });
-                }
-            };
-            /**暂停音乐 */
-            ShopeeAudioSoundChannel.prototype.stop = function () {
-                playAudio(this.$playerId, ShopeeAudioPlayType.PAUSE, this.volume);
-            };
-            return ShopeeAudioSoundChannel;
-        }(egret.EventDispatcher));
-        web.ShopeeAudioSoundChannel = ShopeeAudioSoundChannel;
-        __reflect(ShopeeAudioSoundChannel.prototype, "egret.web.ShopeeAudioSoundChannel", ["egret.SoundChannel"]);
-        function loadAudio(audioURL) {
-            return new Promise(function (resolve, reject) {
-                if (shopeeAudioMap[audioURL]) {
-                    resolve(shopeeAudioMap[audioURL]);
-                }
-                else {
-                    window['bridgeInit'](function () {
-                        window['bridgeCallHandler']('audioPlayFactory', {
-                            'groupToken': 'farm', audioURL: audioURL
-                        }, function (res) {
-                            if (!res || !res.data) {
-                                reject('bridge not support audioPlayFactory');
-                            }
-                            else {
-                                if (res.error === 0) {
-                                    shopeeAudioMap[audioURL] = res.data.playerId;
-                                    resolve(res.data.playerId);
-                                }
-                                else {
-                                    reject("audioPlayFactory load audio error code:" + res.error);
-                                }
-                            }
-                        });
-                    });
-                }
-            });
-        }
-        /**将循环播放的音效放入store */
-        function changeAudioToStoreage(playerId, add) {
-            var arr;
-            try {
-                arr = JSON.parse(egret.localStorage.getItem(ShopeeAudioStorageName.IOSBRIDGEAUDIOARR));
-            }
-            catch (err) { }
-            if (!Array.isArray(arr))
-                arr = [];
-            var index = arr.indexOf(playerId);
-            if (add) {
-                if (index === -1)
-                    arr.push(playerId);
-            }
-            else {
-                if (index !== -1) {
-                    arr.splice(index, 1);
-                }
-            }
-            egret.localStorage.setItem(ShopeeAudioStorageName.IOSBRIDGEAUDIOARR, JSON.stringify(arr));
-        }
-        /**停止所有jsbridge音频 */
-        function stopAllShopeeAudio() {
-            try {
-                var arr = JSON.parse(egret.localStorage.getItem(ShopeeAudioStorageName.IOSBRIDGEAUDIOARR));
-                if (Array.isArray(arr)) {
-                    while (arr.length) {
-                        playAudio(arr.shift(), ShopeeAudioPlayType.STOP, 0);
-                    }
-                }
-            }
-            catch (err) { }
-            egret.localStorage.setItem(ShopeeAudioStorageName.IOSBRIDGEAUDIOARR, JSON.stringify([]));
-        }
-        web.stopAllShopeeAudio = stopAllShopeeAudio;
-        /**改变音频状态 */
-        function changeShopeeAuidoStatus(playerId, controlType) {
-            switch (controlType) {
-                //把循环音频放入缓存，以防reload的时候多个音频同时播放
-                case ShopeeAudioPlayType.PLAYLOOP:
-                case ShopeeAudioPlayType.RESUME:
-                    changeAudioToStoreage(playerId, true);
-                    break;
-                //把暂停的音效移除
-                case ShopeeAudioPlayType.PAUSE:
-                    changeAudioToStoreage(playerId, false);
-                    break;
-            }
-        }
-        /**
-         * JSBridge播放音效
-         * @param playerId 音效id
-         * @param controlType 音效类型
-         * @param volume
-         */
-        function playAudio(playerId, controlType, volume) {
-            return new Promise(function (resolve, reject) {
-                window['bridgeInit'](function () {
-                    var data = {
-                        playerId: playerId, controlType: controlType, 'volume': volume.toString()
-                    };
-                    window['bridgeCallHandler']('audioPlayControl', data, function (res) {
-                        shopeeAudioStatusMap[playerId] = controlType;
-                        if (!res) {
-                            reject('bridge not support audioPlayFactory');
-                        }
-                        else {
-                            if (res.error === 0) {
-                                changeShopeeAuidoStatus(playerId, controlType);
-                                resolve(res.playerId);
-                            }
-                            else {
-                                reject(res.error);
-                            }
-                        }
-                    });
-                });
-            });
-        }
-        /**https://confluence.shopee.io/display/SPAT/%5BBeta%5DaudioPlay+Bridge */
-        var ShopeeAudioPlayType;
-        (function (ShopeeAudioPlayType) {
-            ShopeeAudioPlayType[ShopeeAudioPlayType["KEEP"] = 0] = "KEEP";
-            ShopeeAudioPlayType[ShopeeAudioPlayType["PLAYLOOP"] = 1] = "PLAYLOOP";
-            ShopeeAudioPlayType[ShopeeAudioPlayType["PLAY"] = 2] = "PLAY";
-            ShopeeAudioPlayType[ShopeeAudioPlayType["PAUSE"] = 3] = "PAUSE";
-            ShopeeAudioPlayType[ShopeeAudioPlayType["RESUME"] = 4] = "RESUME";
-            ShopeeAudioPlayType[ShopeeAudioPlayType["STOP"] = 5] = "STOP";
-            ShopeeAudioPlayType[ShopeeAudioPlayType["EMITPLAY"] = 6] = "EMITPLAY";
-            ShopeeAudioPlayType[ShopeeAudioPlayType["REWINDEMITPLAY"] = 7] = "REWINDEMITPLAY";
-            ShopeeAudioPlayType[ShopeeAudioPlayType["DUPLICATETRACKPLAY"] = 8] = "DUPLICATETRACKPLAY";
-        })(ShopeeAudioPlayType = web.ShopeeAudioPlayType || (web.ShopeeAudioPlayType = {}));
-        /**
-         * shopee bridge能力存储key值
-         */
-        var ShopeeAudioStorageName;
-        (function (ShopeeAudioStorageName) {
-            ShopeeAudioStorageName["IOSBRIDGEAUDIOARR"] = "IOSBRIDGEAUDIOARR";
-        })(ShopeeAudioStorageName || (ShopeeAudioStorageName = {}));
-    })(web = egret.web || (egret.web = {}));
-})(egret || (egret = {}));
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright (c) 2014-present, Egret Technology.
@@ -26397,3 +26137,9 @@ var egret;
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
+var egret;
+(function (egret) {
+    var sys;
+    (function (sys) {
+    })(sys = egret.sys || (egret.sys = {}));
+})(egret || (egret = {}));

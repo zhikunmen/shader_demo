@@ -42,6 +42,10 @@ var GameVc = (function (_super) {
                 this.viewGroup.removeChildren();
                 this.viewGroup.addChild(new MvpMat);
                 break;
+            case this.shake:
+                this.viewGroup.removeChildren();
+                this.viewGroup.addChild(new Shake);
+                break;
         }
     };
     return GameVc;

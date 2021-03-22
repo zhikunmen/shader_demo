@@ -21,6 +21,7 @@
 		"bin-debug/shader/MvpMat.js",
 		"bin-debug/shader/Point.js",
 		"bin-debug/shader/Ripple.js",
+		"bin-debug/shader/Shake.js",
 		"bin-debug/shader/Simple.js",
 		"bin-debug/shader/SinShader.js"
 	]

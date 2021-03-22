@@ -3111,12 +3111,12 @@ var egret;
                 var ua = navigator.userAgent.toLowerCase();
                 Html5Capatibility.ua = ua;
                 Html5Capatibility._canUseBlob = false;
-                var canUseWebAudio = window['AudioContext'] || window['webkitAudioContext'] || window['mozAudioContext'];
-                var isIos = ua.indexOf('iphone') >= 0 || ua.indexOf('ipad') >= 0 || ua.indexOf('ipod') >= 0;
+                var canUseWebAudio = window["AudioContext"] || window["webkitAudioContext"] || window["mozAudioContext"];
+                var isIos = ua.indexOf("iphone") >= 0 || ua.indexOf("ipad") >= 0 || ua.indexOf("ipod") >= 0;
                 if (canUseWebAudio) {
                     try {
                         //防止某些chrome版本创建异常问题
-                        web.WebAudioDecode.ctx = new (window['AudioContext'] || window['webkitAudioContext'] || window['mozAudioContext'])();
+                        web.WebAudioDecode.ctx = new (window["AudioContext"] || window["webkitAudioContext"] || window["mozAudioContext"])();
                     }
                     catch (e) {
                         canUseWebAudio = false;
@@ -3132,7 +3132,7 @@ var egret;
                     checkAudioType = false;
                     Html5Capatibility.setAudioType(audioType);
                 }
-                else if (!isIos && ua.indexOf('safari') >= 0 && ua.indexOf('chrome') === -1) {
+                else if (!isIos && ua.indexOf("safari") >= 0 && ua.indexOf("chrome") === -1) {
                     // In Safari browser on Mac,use web audio
                     checkAudioType = false;
                     Html5Capatibility.setAudioType(AudioType.WEB_AUDIO);
@@ -3141,7 +3141,7 @@ var egret;
                     checkAudioType = true;
                     Html5Capatibility.setAudioType(AudioType.HTML5_AUDIO);
                 }
-                if (ua.indexOf('android') >= 0) {
+                if (ua.indexOf("android") >= 0) {
                     if (checkAudioType && canUseWebAudio) {
                         Html5Capatibility.setAudioType(AudioType.WEB_AUDIO);
                     }
@@ -3154,18 +3154,15 @@ var egret;
                         }
                     }
                 }
-                var winURL = window['URL'] || window['webkitURL'];
+                var winURL = window["URL"] || window["webkitURL"];
                 if (!winURL) {
                     Html5Capatibility._canUseBlob = false;
                 }
-                if (ua.indexOf('egretnative') >= 0) {
+                if (ua.indexOf("egretnative") >= 0) {
                     Html5Capatibility.setAudioType(AudioType.HTML5_AUDIO);
                     Html5Capatibility._canUseBlob = true;
                 }
                 egret.Sound = Html5Capatibility._AudioClass;
-                if (window['RES']) {
-                    window['RES'].isSupportIosAudioBridge && window['RES'].isSupportIosAudioBridge() && web.stopAllShopeeAudio();
-                }
             };
             Html5Capatibility.setAudioType = function (type) {
                 Html5Capatibility._audioType = type;
@@ -3198,7 +3195,7 @@ var egret;
             /**
              * @private
              */
-            Html5Capatibility.ua = '';
+            Html5Capatibility.ua = "";
             return Html5Capatibility;
         }(egret.HashObject));
         web.Html5Capatibility = Html5Capatibility;
@@ -3211,18 +3208,18 @@ var egret;
          * @private
          */
         function getPrefixStyleName(name, element) {
-            var header = '';
+            var header = "";
             if (element != null) {
                 header = getPrefix(name, element);
             }
             else {
                 if (currentPrefix == null) {
                     var tempStyle = document.createElement('div').style;
-                    currentPrefix = getPrefix('transform', tempStyle);
+                    currentPrefix = getPrefix("transform", tempStyle);
                 }
                 header = currentPrefix;
             }
-            if (header == '') {
+            if (header == "") {
                 return name;
             }
             return header + name.charAt(0).toUpperCase() + name.substring(1, name.length);
@@ -3233,17 +3230,17 @@ var egret;
          */
         function getPrefix(name, element) {
             if (name in element) {
-                return '';
+                return "";
             }
             name = name.charAt(0).toUpperCase() + name.substring(1, name.length);
-            var transArr = ['webkit', 'ms', 'Moz', 'O'];
+            var transArr = ["webkit", "ms", "Moz", "O"];
             for (var i = 0; i < transArr.length; i++) {
                 var tempStyle = transArr[i] + name;
                 if (tempStyle in element) {
                     return transArr[i];
                 }
             }
-            return '';
+            return "";
         }
         web.getPrefix = getPrefix;
     })(web = egret.web || (egret.web = {}));

@@ -143,11 +143,11 @@ window.skins=window.skins||{};
 	__extends(GameVcSkin, _super);
 	function GameVcSkin() {
 		_super.call(this);
-		this.skinParts = ["viewGroup","point","sin","mvpMat","ripple","simple"];
+		this.skinParts = ["viewGroup","point","sin","mvpMat","ripple","simple","shake"];
 		
 		this.height = 1136;
 		this.width = 640;
-		this.elementsContent = [this.viewGroup_i(),this.point_i(),this.sin_i(),this.mvpMat_i(),this.ripple_i(),this.simple_i()];
+		this.elementsContent = [this.viewGroup_i(),this.point_i(),this.sin_i(),this.mvpMat_i(),this.ripple_i(),this.simple_i(),this.shake_i()];
 	}
 	var _proto = GameVcSkin.prototype;
 
@@ -199,6 +199,14 @@ window.skins=window.skins||{};
 		t.label = "Simple";
 		t.x = 417;
 		t.y = 57;
+		return t;
+	};
+	_proto.shake_i = function () {
+		var t = new eui.Button();
+		this.shake = t;
+		t.label = "Shake";
+		t.x = 237;
+		t.y = 124;
 		return t;
 	};
 	return GameVcSkin;

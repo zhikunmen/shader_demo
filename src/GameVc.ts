@@ -12,6 +12,7 @@ class GameVc extends BaseEuiView {
 
     public mvpMat: eui.Button;
     public sin: eui.Button;
+    public shake: eui.Button;
 
     protected initUI() {
         this.width = egret.MainContext.instance.stage.stageWidth;
@@ -40,6 +41,10 @@ class GameVc extends BaseEuiView {
             case this.mvpMat:
                 this.viewGroup.removeChildren();
                 this.viewGroup.addChild(new MvpMat);
+                break;
+            case this.shake:
+                this.viewGroup.removeChildren();
+                this.viewGroup.addChild(new Shake);
                 break;
         }
     }
