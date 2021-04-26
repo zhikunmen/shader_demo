@@ -8,25 +8,30 @@ var __extends = this && this.__extends || function __extends(t, e) {
 for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
-var Point = (function (_super) {
-    __extends(Point, _super);
-    function Point() {
+var Loading = (function (_super) {
+    __extends(Loading, _super);
+    function Loading() {
         return _super.call(this) || this;
     }
-    Point.prototype.initUI = function () {
+    Loading.prototype.initUI = function () {
         var content = new eui.Image('bg_jpg');
         var stage = egret.MainContext.instance.stage;
         content.width = stage.stageWidth;
         content.height = stage.stageHeight;
         this.addChild(content);
         this.initShader(content);
-        DataView;
     };
-    Point.prototype.initShader = function (content) {
-        content.filters = [new egret.CustomFilter(getShader(ShaderConstant.VERTEX), getShader(ShaderConstant.F_POINT), {
-                ratio: 1334 / 750
-            })];
+    Loading.prototype.initShader = function (content) {
+        var customFilter = new egret.CustomFilter(getShader(ShaderConstant.VERTEX), getShader(ShaderConstant.F_MVP), {
+            iTime: 0,
+            ratio: 1334 / 750
+        });
+        content.filters = [customFilter];
+        egret.startTick(function (timeStamp) {
+            customFilter.uniforms.iTime += 0.01;
+            return false;
+        }, this);
     };
-    return Point;
+    return Loading;
 }(BaseEuiView));
-__reflect(Point.prototype, "Point");
+__reflect(Loading.prototype, "Loading");

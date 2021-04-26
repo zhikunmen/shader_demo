@@ -8,25 +8,29 @@ var __extends = this && this.__extends || function __extends(t, e) {
 for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
-var Point = (function (_super) {
-    __extends(Point, _super);
-    function Point() {
+var Water = (function (_super) {
+    __extends(Water, _super);
+    function Water() {
         return _super.call(this) || this;
     }
-    Point.prototype.initUI = function () {
+    Water.prototype.initUI = function () {
         var content = new eui.Image('bg_jpg');
         var stage = egret.MainContext.instance.stage;
         content.width = stage.stageWidth;
         content.height = stage.stageHeight;
         this.addChild(content);
         this.initShader(content);
-        DataView;
     };
-    Point.prototype.initShader = function (content) {
-        content.filters = [new egret.CustomFilter(getShader(ShaderConstant.VERTEX), getShader(ShaderConstant.F_POINT), {
-                ratio: 1334 / 750
-            })];
+    Water.prototype.initShader = function (content) {
+        var customFilter = new egret.CustomFilter(getShader(ShaderConstant.VERTEX), getShader(ShaderConstant.F_WATER), {
+            iTime: 0,
+        });
+        content.filters = [customFilter];
+        egret.startTick(function (timeStamp) {
+            customFilter.uniforms.iTime += 0.01;
+            return false;
+        }, this);
     };
-    return Point;
+    return Water;
 }(BaseEuiView));
-__reflect(Point.prototype, "Point");
+__reflect(Water.prototype, "Water");

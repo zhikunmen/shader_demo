@@ -1,8 +1,14 @@
 {
-	"groups":[{
+	"groups":[
+		{
 			"keys":"checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,button_down_png,button_up_png,thumb_pb_png,track_pb_png,track_sb_png,bg_jpg,egret_icon_png,description_json,N1_png,N2_png,N3_png,N4_png,N5_png",
 			"name":"preload"
-		}],
+		},
+		{
+			"keys":"f_point_glsl,f_ripple_glsl,f_shake_glsl,f_simple_glsl,f_sin_glsl,fragment_glsl,v_mvpMat_glsl,vertex_glsl,f_loading_glsl,f_water_glsl,f_mvp_glsl,f_boom_glsl",
+			"name":"shader"
+		}
+	],
 	"resources":[
 		{
 			"name":"checkbox_select_disabled_png",
@@ -158,6 +164,66 @@
 			"name":"N5_png",
 			"type":"image",
 			"url":"assets/map/N5.png"
+		},
+		{
+			"name":"f_point_glsl",
+			"type":"bin",
+			"url":"shader/f_point.glsl"
+		},
+		{
+			"name":"f_ripple_glsl",
+			"type":"bin",
+			"url":"shader/f_ripple.glsl"
+		},
+		{
+			"name":"f_shake_glsl",
+			"type":"bin",
+			"url":"shader/f_shake.glsl"
+		},
+		{
+			"name":"f_simple_glsl",
+			"type":"bin",
+			"url":"shader/f_simple.glsl"
+		},
+		{
+			"name":"f_sin_glsl",
+			"type":"bin",
+			"url":"shader/f_sin.glsl"
+		},
+		{
+			"name":"fragment_glsl",
+			"type":"bin",
+			"url":"shader/fragment.glsl"
+		},
+		{
+			"name":"v_mvpMat_glsl",
+			"type":"bin",
+			"url":"shader/v_mvpMat.glsl"
+		},
+		{
+			"name":"vertex_glsl",
+			"type":"bin",
+			"url":"shader/vertex.glsl"
+		},
+		{
+			"name":"f_loading_glsl",
+			"type":"bin",
+			"url":"shader/f_loading.glsl"
+		},
+		{
+			"name":"f_water_glsl",
+			"type":"bin",
+			"url":"shader/f_water.glsl"
+		},
+		{
+			"name":"f_mvp_glsl",
+			"type":"bin",
+			"url":"shader/f_mvp.glsl"
+		},
+		{
+			"name":"f_boom_glsl",
+			"type":"bin",
+			"url":"shader/f_boom.glsl"
 		}
 	]
 }

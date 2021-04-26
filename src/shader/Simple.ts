@@ -9,26 +9,7 @@ class Simple extends BaseEuiView {
         bg.graphics.drawRect(0,0,750,1334);
         bg.graphics.endFill();
         this.addChild(bg);
-        let fragmentSrc = [
-            "precision lowp float;",
-            "varying vec2 vTextureCoord;",
-            "uniform float width;",
-            "uniform float height;",
-            "uniform float movex;",
-            "uniform float movey;",
-            "void main(){",
-                "vec4 fg;",
-                "vec2 uv = vTextureCoord.xy;",
-                "if(mod(floor((uv.x + movex) / width) + floor((uv.y + movey) / height),2.0) == 0.0){",
-                    "fg = vec4(1,1,1,1);",
-                "}",
-                'else{',
-                    'fg = vec4(0,0,0,1);',
-                '}',
-                'gl_FragColor = fg;',
-            "}"
-        ].join("\n");
-        const customFilter = new egret.CustomFilter(this.vertexSrc, fragmentSrc, {})
+        const customFilter = new egret.CustomFilter(getShader(ShaderConstant.VERTEX), getShader(ShaderConstant.F_SIMPLE), {});
         bg.filters = [customFilter];
         const stageH = egret.MainContext.instance.stage.stageHeight;
         const stageW = egret.MainContext.instance.stage.stageWidth;
@@ -41,12 +22,12 @@ class Simple extends BaseEuiView {
             size += inc;
             if(size > 100){
                 inc = 0;
-                movexTurn && (movex -= 0.1);
-                if(movex <= -10){
+                movexTurn && (movex -= 0.01);
+                if(movex <= -2){
                     movexTurn = false;
-                    movey += -0.1;
+                    movey += -0.01;
                 }
-                if(movey <= -10 || movexTurn){
+                if(movey <= -2 || movexTurn){
 
                 }
             }

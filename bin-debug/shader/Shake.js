@@ -31,8 +31,7 @@ var Shake = (function (_super) {
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.click, this);
     };
     Shake.prototype.click = function (evt) {
-        var fragmentSrc = "\nprecision lowp float;\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\nuniform sampler2D uSampler;\nuniform float iTime;\nvoid main(void){\n    vec2 uv=vTextureCoord.xy;\n    float sway=10.;\n    float y=uv.y;\n    vec4 fg=texture2D(uSampler,uv);\n    // if(fg.a==0.)discard;\n    sway+=y*sway;\n    uv.x+=(cos(iTime/2.+uv.y/20.)/sway)+sin(iTime+uv.y/50.)/sway;\n    vec4 texColor=texture2D(uSampler,uv);\n    gl_FragColor=texColor;\n}\n";
-        var customFilter = new egret.CustomFilter(this.vertexSrc, fragmentSrc, {
+        var customFilter = new egret.CustomFilter(getShader(ShaderConstant.VERTEX), getShader(ShaderConstant.F_SHAKE), {
             iTime: 0.,
         });
         this.cells.forEach(function (cell) {

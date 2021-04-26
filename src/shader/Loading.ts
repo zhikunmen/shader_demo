@@ -1,4 +1,4 @@
-class Point extends BaseEuiView {
+class Loading extends BaseEuiView {
     constructor() {
         super();
     }
@@ -11,12 +11,18 @@ class Point extends BaseEuiView {
         content.height = stage.stageHeight;
         this.addChild(content);
         this.initShader(content);
-        DataView
+        
     }
 
     private initShader(content: egret.DisplayObject){
-        content.filters = [new egret.CustomFilter(getShader(ShaderConstant.VERTEX),getShader(ShaderConstant.F_POINT),{
+        let customFilter = new egret.CustomFilter(getShader(ShaderConstant.VERTEX),getShader(ShaderConstant.F_MVP),{
+            iTime:0,
             ratio: 1334/750
-        })];
+        });
+        content.filters = [customFilter];
+        egret.startTick((timeStamp) => {
+            customFilter.uniforms.iTime += 0.01;
+            return false;
+        }, this)
     }
 }

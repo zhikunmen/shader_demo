@@ -1,14 +1,18 @@
 <?xml version='1.0' encoding='utf-8'?>
 <e:Skin class="GameVcSkin"
-	height="1136" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" xmlns:tween="egret.tween.*" width="640">
+	height="1334" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" xmlns:tween="egret.tween.*" width="750">
 	<w:Declarations>
 	</w:Declarations>
 	<e:Group id="viewGroup" left="0" right="0" top="0" bottom="0">
 	</e:Group>
 	<e:Button id="point" label="Point" x="67" y="58"/>
-	<e:Button id="sin" label="Sin" x="68" y="125"/>
-	<e:Button id="mvpMat" label="mvpMat" x="236" y="125" visible="false"/>
+	<e:Button id="water" label="water" x="68" y="125"/>
+	<e:Button id="sin" label="Sin" x="586" y="61"/>
+	<e:Button id="mvpMat" label="mvpMat" x="534" y="59" visible="false"/>
 	<e:Button id="ripple" label="Ripple" x="236" y="58"/>
 	<e:Button id="simple" label="Simple" x="417" y="57"/>
 	<e:Button id="shake" label="Shake" x="237" y="124"/>
+	<e:Button id="Rotation" label="roatation" x="415" y="124"/>
+	<e:Button id="loading" label="loading" x="586" y="124"/>
+	<e:Button id="boom" label="Boom" x="71" y="194"/>
 </e:Skin>

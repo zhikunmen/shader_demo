@@ -21,12 +21,63 @@ var MvpMat = (function (_super) {
         var stageH = stage.stageHeight;
         sky.width = stageW;
         sky.height = stageH;
-        this.vertexSrc =
-            "\nattribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\n\nconst vec2 center=vec2(-1.,1.);\nuniform mat4 viewMat;\nuniform mat4 projectionMat;\nuniform float iTime;\n\nvarying vec2 vTexCoord;\nconst vec3 camera=vec3(0,0,1);\n\n// \u4F2A\u968F\u673A\u6570\u751F\u6210\u5668\nfloat rand(vec2 co){\n    return fract(sin(dot(co,vec2(12.9898,78.233)))*43758.5453);\n}\n\nvoid main(){\n    // \u6C42\u51FA\u7C92\u5B50\u76F8\u5BF9\u4E8E\u76F8\u673A\u4F4D\u7F6E\u7684\u5355\u4F4D\u65B9\u5411\u5411\u91CF\uFF0C\u5E76\u9644\u5E26\u4E0A\u4F2A\u968F\u673A\u6570\u7684\u6270\u52A8\n    vec3 dir=normalize(center.xy*rand(center.xy)-camera);\n    // \u6CBF\u6270\u52A8\u540E\u7684\u65B9\u5411\uFF0C\u968F\u65F6\u95F4\u9012\u589E\u504F\u79FB\u91CF\n    vec2 translatedPos=aVertexPosition.xy+dir*iTime;\n    \n    // \u7ED9\u7EB9\u7406\u5750\u6807\u63D2\u503C\n    vTexCoord=aTextureCoord;\n    // \u6C42\u51FA\u77E9\u9635\u53D8\u6362\u540E\u6700\u7EC8\u7684\u9876\u70B9\u4F4D\u7F6E\n    gl_Position=vec4(translatedPos,1,1);\n}\n        ";
-        var fragmentSrc = "\nprecision lowp float;\n\nvarying vec2 vTextureCoord;\nuniform sampler2D uSampler;\nvoid main(){\n    gl_FragColor=texture2D(uSampler,vTextureCoord);\n}\n";
-        var customFilter = new egret.CustomFilter(this.vertexSrc, fragmentSrc, {
-            iTime: 0,
-        });
+        var push = function (arr, x) { arr[arr.length] = x; };
+        // 生成将图像等分为 n x n 矩形的数据
+        var initParticlesData = function (n) {
+            var _a = [[], [], [], []], positions = _a[0], centers = _a[1], texCoords = _a[2], indices = _a[3];
+            for (var i = 0; i < n; i++) {
+                for (var j = 0; j < n; j++) {
+                    var _b = [i / n, (i + 1) / n], x0 = _b[0], x1 = _b[1]; // 每个粒子的 x 轴左右坐标
+                    var _c = [j / n, (j + 1) / n], y0 = _c[0], y1 = _c[1]; // 每个粒子的 y 轴上下坐标
+                    var _d = [x0 + x1 / 2, y0 + y1 / 2], xC = _d[0], yC = _d[1]; // 每个粒子的中心二维坐标
+                    var h = 0.5; // 将中心点从 (0.5, 0.5) 平移到原点的偏移量
+                    // positions in (x, y), z = 0
+                    push(positions, x0 - h);
+                    push(positions, y0 - h);
+                    push(positions, x1 - h);
+                    push(positions, y0 - h);
+                    push(positions, x1 - h);
+                    push(positions, y1 - h);
+                    push(positions, x0 - h);
+                    push(positions, y1 - h);
+                    // texCoords in (x, y)
+                    push(texCoords, x0);
+                    push(texCoords, y0);
+                    push(texCoords, x1);
+                    push(texCoords, y0);
+                    push(texCoords, x1);
+                    push(texCoords, y1);
+                    push(texCoords, x0);
+                    push(texCoords, y1);
+                    // center in (x, y), z = 0
+                    push(centers, xC - h);
+                    push(centers, yC - h);
+                    push(centers, xC - h);
+                    push(centers, yC - h);
+                    push(centers, xC - h);
+                    push(centers, yC - h);
+                    push(centers, xC - h);
+                    push(centers, yC - h);
+                    // indices
+                    var k = (i * n + j) * 4;
+                    push(indices, k);
+                    push(indices, k + 1);
+                    push(indices, k + 2);
+                    push(indices, k);
+                    push(indices, k + 2);
+                    push(indices, k + 3);
+                }
+            }
+            // 着色器内的变量名是单数形式，将复数形式的数组名与其对应起来
+            return {
+                pos: positions,
+                center: centers,
+                texCoord: texCoords,
+                index: indices
+            };
+        };
+        console.log(initParticlesData(5));
+        var customFilter = new egret.CustomFilter(getShader(ShaderConstant.V_MVPMAT), getShader(ShaderConstant.FRAFMENT), initParticlesData(10));
         this.filters = [customFilter];
         egret.startTick(function (timeStamp) {
             customFilter.uniforms.time += 0.01;

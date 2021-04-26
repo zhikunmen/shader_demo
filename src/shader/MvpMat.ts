@@ -12,51 +12,55 @@ class MvpMat extends BaseEuiView {
         let stageH = stage.stageHeight;
         sky.width = stageW;
         sky.height = stageH;
-
-        this.vertexSrc = 
-        `
-attribute vec2 aVertexPosition;
-attribute vec2 aTextureCoord;
-
-const vec2 center=vec2(-1.,1.);
-uniform mat4 viewMat;
-uniform mat4 projectionMat;
-uniform float iTime;
-
-varying vec2 vTexCoord;
-const vec3 camera=vec3(0,0,1);
-
-// 伪随机数生成器
-float rand(vec2 co){
-    return fract(sin(dot(co,vec2(12.9898,78.233)))*43758.5453);
-}
-
-void main(){
-    // 求出粒子相对于相机位置的单位方向向量，并附带上伪随机数的扰动
-    vec3 dir=normalize(center.xy*rand(center.xy)-camera);
-    // 沿扰动后的方向，随时间递增偏移量
-    vec2 translatedPos=aVertexPosition.xy+dir*iTime;
-    
-    // 给纹理坐标插值
-    vTexCoord=aTextureCoord;
-    // 求出矩阵变换后最终的顶点位置
-    gl_Position=vec4(translatedPos,1,1);
-}
-        `
-
-        let fragmentSrc = 
-`
-precision lowp float;
-
-varying vec2 vTextureCoord;
-uniform sampler2D uSampler;
-void main(){
-    gl_FragColor=texture2D(uSampler,vTextureCoord);
-}
-`
-        let customFilter = new egret.CustomFilter(this.vertexSrc, fragmentSrc, {
-            iTime:0,
-        })
+        
+        const push = (arr, x) => { arr[arr.length] = x }
+ 
+        // 生成将图像等分为 n x n 矩形的数据
+        const initParticlesData = n => {
+            const [positions, centers, texCoords, indices] = [[], [], [], []]
+            
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                const [x0, x1] = [i / n, (i + 1) / n] // 每个粒子的 x 轴左右坐标
+                const [y0, y1] = [j / n, (j + 1) / n] // 每个粒子的 y 轴上下坐标
+                const [xC, yC] = [x0 + x1 / 2, y0 + y1 / 2] // 每个粒子的中心二维坐标
+                const h = 0.5 // 将中心点从 (0.5, 0.5) 平移到原点的偏移量
+            
+                // positions in (x, y), z = 0
+                push(positions, x0 - h); push(positions, y0 - h)
+                push(positions, x1 - h); push(positions, y0 - h)
+                push(positions, x1 - h); push(positions, y1 - h)
+                push(positions, x0 - h); push(positions, y1 - h)
+            
+                // texCoords in (x, y)
+                push(texCoords, x0); push(texCoords, y0)
+                push(texCoords, x1); push(texCoords, y0)
+                push(texCoords, x1); push(texCoords, y1)
+                push(texCoords, x0); push(texCoords, y1)
+            
+                // center in (x, y), z = 0
+                push(centers, xC - h); push(centers, yC - h)
+                push(centers, xC - h); push(centers, yC - h)
+                push(centers, xC - h); push(centers, yC - h)
+                push(centers, xC - h); push(centers, yC - h)
+            
+                // indices
+                const k = (i * n + j) * 4
+                push(indices, k); push(indices, k + 1); push(indices, k + 2)
+                push(indices, k); push(indices, k + 2); push(indices, k + 3)
+                }
+            }
+        
+        // 着色器内的变量名是单数形式，将复数形式的数组名与其对应起来
+            return {
+                pos: positions,
+                center: centers,
+                texCoord: texCoords,
+                index: indices
+            }
+        }
+        console.log(initParticlesData(5));
+        let customFilter = new egret.CustomFilter(getShader(ShaderConstant.V_MVPMAT), getShader(ShaderConstant.FRAFMENT), initParticlesData(10))
         this.filters = [customFilter];
         egret.startTick((timeStamp) => {
             customFilter.uniforms.time += 0.01;

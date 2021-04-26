@@ -12,17 +12,22 @@
 	],
 	"game": [
 		"bin-debug/BaseEuiView.js",
-		"bin-debug/ThemeAdapter.js",
+		"bin-debug/shader/MvpMat.js",
 		"bin-debug/GameVc.js",
 		"bin-debug/LoadingUI.js",
 		"bin-debug/Main.js",
-		"bin-debug/Platform.js",
+		"bin-debug/ThemeAdapter.js",
+		"bin-debug/shader/Boom.js",
+		"bin-debug/shader/Constant.js",
+		"bin-debug/shader/Loading.js",
 		"bin-debug/AssetAdapter.js",
-		"bin-debug/shader/MvpMat.js",
 		"bin-debug/shader/Point.js",
 		"bin-debug/shader/Ripple.js",
 		"bin-debug/shader/Shake.js",
 		"bin-debug/shader/Simple.js",
-		"bin-debug/shader/SinShader.js"
+		"bin-debug/shader/SinShader.js",
+		"bin-debug/shader/Water.js",
+		"bin-debug/shader_3d/Rotation.js",
+		"bin-debug/Utils/Utils.js"
 	]
 }
