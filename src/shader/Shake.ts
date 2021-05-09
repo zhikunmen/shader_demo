@@ -23,8 +23,8 @@ class Shake extends BaseEuiView {
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.click, this);
     }
 
-    private click(evt: egret.TouchEvent) {
-        let customFilter = new egret.CustomFilter(getShader(ShaderConstant.VERTEX), getShader(ShaderConstant.F_SHAKE), {
+    private async click(evt: egret.TouchEvent) {
+        let customFilter = new egret.CustomFilter(await getShader(ShaderConstant.VERTEX), await getShader(ShaderConstant.F_SHAKE), {
             iTime: 0.,
         })
         this.cells.forEach((cell)=>{

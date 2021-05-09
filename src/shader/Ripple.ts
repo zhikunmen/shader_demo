@@ -16,8 +16,8 @@ class Ripple extends BaseEuiView {
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.click, this);
     }
 
-    private click(evt: egret.TouchEvent) {
-        let customFilter = new egret.CustomFilter(getShader(ShaderConstant.VERTEX), getShader(ShaderConstant.F_RIPPLE), {
+    private async click(evt: egret.TouchEvent) {
+        let customFilter = new egret.CustomFilter(await getShader(ShaderConstant.VERTEX), await getShader(ShaderConstant.F_RIPPLE), {
             center: { x: evt.stageX / this.width, y: evt.stageY / this.height },
             time: 0.01,
             offset: 0.01,

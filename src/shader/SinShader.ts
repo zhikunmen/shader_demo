@@ -4,7 +4,7 @@ class SinShader extends BaseEuiView {
     }
 
 
-    protected initUI() {
+    protected async initUI() {
         let sky = new eui.Image("bg_jpg");
         this.addChild(sky);
         const stage = egret.MainContext.instance.stage;
@@ -12,7 +12,7 @@ class SinShader extends BaseEuiView {
         let stageH = stage.stageHeight;
         sky.width = stageW;
         sky.height = stageH;
-        let customFilter = new egret.CustomFilter(getShader(ShaderConstant.VERTEX), getShader(ShaderConstant.F_SIN), {
+        let customFilter = new egret.CustomFilter(await getShader(ShaderConstant.VERTEX), await getShader(ShaderConstant.F_SIN), {
             amplitude: 0.1,//振幅
             angularVelocity: 10.0,//角速度
             frequency: 10.0,//频率

@@ -14,8 +14,8 @@ class Water extends BaseEuiView {
         
     }
 
-    private initShader(content: egret.DisplayObject){
-        let customFilter = new egret.CustomFilter(getShader(ShaderConstant.VERTEX),getShader(ShaderConstant.F_WATER),{
+    private async initShader(content: egret.DisplayObject){
+        let customFilter = new egret.CustomFilter(await getShader(ShaderConstant.VERTEX),await getShader(ShaderConstant.F_WATER),{
             iTime:0,
         });
         content.filters = [customFilter];

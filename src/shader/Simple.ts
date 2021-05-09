@@ -3,13 +3,13 @@ class Simple extends BaseEuiView {
         super();
     }
 
-    protected initUI() {
+    protected async initUI() {
         let bg = new egret.Shape();
         bg.graphics.beginFill(0,1);
         bg.graphics.drawRect(0,0,750,1334);
         bg.graphics.endFill();
         this.addChild(bg);
-        const customFilter = new egret.CustomFilter(getShader(ShaderConstant.VERTEX), getShader(ShaderConstant.F_SIMPLE), {});
+        const customFilter = new egret.CustomFilter(await getShader(ShaderConstant.VERTEX), await getShader(ShaderConstant.F_SIMPLE), {});
         bg.filters = [customFilter];
         const stageH = egret.MainContext.instance.stage.stageHeight;
         const stageW = egret.MainContext.instance.stage.stageWidth;

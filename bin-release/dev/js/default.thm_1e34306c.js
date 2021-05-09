@@ -143,11 +143,11 @@ window.skins=window.skins||{};
 	__extends(GameVcSkin, _super);
 	function GameVcSkin() {
 		_super.call(this);
-		this.skinParts = ["viewGroup","point","sin","mvpMat","ripple","simple","shake"];
+		this.skinParts = ["viewGroup","point","water","sin","mvpMat","ripple","simple","shake","Rotation","loading","boom"];
 		
-		this.height = 1136;
-		this.width = 640;
-		this.elementsContent = [this.viewGroup_i(),this.point_i(),this.sin_i(),this.mvpMat_i(),this.ripple_i(),this.simple_i(),this.shake_i()];
+		this.height = 1334;
+		this.width = 750;
+		this.elementsContent = [this.viewGroup_i(),this.point_i(),this.water_i(),this.sin_i(),this.mvpMat_i(),this.ripple_i(),this.simple_i(),this.shake_i(),this.Rotation_i(),this.loading_i(),this.boom_i()];
 	}
 	var _proto = GameVcSkin.prototype;
 
@@ -168,12 +168,20 @@ window.skins=window.skins||{};
 		t.y = 58;
 		return t;
 	};
+	_proto.water_i = function () {
+		var t = new eui.Button();
+		this.water = t;
+		t.label = "water";
+		t.x = 68;
+		t.y = 125;
+		return t;
+	};
 	_proto.sin_i = function () {
 		var t = new eui.Button();
 		this.sin = t;
 		t.label = "Sin";
-		t.x = 68;
-		t.y = 125;
+		t.x = 586;
+		t.y = 61;
 		return t;
 	};
 	_proto.mvpMat_i = function () {
@@ -181,8 +189,8 @@ window.skins=window.skins||{};
 		this.mvpMat = t;
 		t.label = "mvpMat";
 		t.visible = false;
-		t.x = 236;
-		t.y = 125;
+		t.x = 534;
+		t.y = 59;
 		return t;
 	};
 	_proto.ripple_i = function () {
@@ -207,6 +215,30 @@ window.skins=window.skins||{};
 		t.label = "Shake";
 		t.x = 237;
 		t.y = 124;
+		return t;
+	};
+	_proto.Rotation_i = function () {
+		var t = new eui.Button();
+		this.Rotation = t;
+		t.label = "roatation";
+		t.x = 415;
+		t.y = 124;
+		return t;
+	};
+	_proto.loading_i = function () {
+		var t = new eui.Button();
+		this.loading = t;
+		t.label = "loading";
+		t.x = 586;
+		t.y = 124;
+		return t;
+	};
+	_proto.boom_i = function () {
+		var t = new eui.Button();
+		this.boom = t;
+		t.label = "Boom";
+		t.x = 71;
+		t.y = 194;
 		return t;
 	};
 	return GameVcSkin;

@@ -4,7 +4,7 @@ class MvpMat extends BaseEuiView {
     }
 
 
-    protected initUI() {
+    protected async initUI() {
         let sky = new eui.Image("bg_jpg");
         this.addChild(sky);
         const stage = egret.MainContext.instance.stage;
@@ -16,7 +16,7 @@ class MvpMat extends BaseEuiView {
         const push = (arr, x) => { arr[arr.length] = x }
  
         // 生成将图像等分为 n x n 矩形的数据
-        const initParticlesData = n => {
+        const initParticlesData =  n => {
             const [positions, centers, texCoords, indices] = [[], [], [], []]
             
             for (let i = 0; i < n; i++) {
@@ -60,7 +60,7 @@ class MvpMat extends BaseEuiView {
             }
         }
         console.log(initParticlesData(5));
-        let customFilter = new egret.CustomFilter(getShader(ShaderConstant.V_MVPMAT), getShader(ShaderConstant.FRAFMENT), initParticlesData(10))
+        let customFilter = new egret.CustomFilter(await getShader(ShaderConstant.V_MVPMAT), await getShader(ShaderConstant.FRAFMENT), initParticlesData(10))
         this.filters = [customFilter];
         egret.startTick((timeStamp) => {
             customFilter.uniforms.time += 0.01;

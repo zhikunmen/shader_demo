@@ -14,8 +14,8 @@ class Loading extends BaseEuiView {
         
     }
 
-    private initShader(content: egret.DisplayObject){
-        let customFilter = new egret.CustomFilter(getShader(ShaderConstant.VERTEX),getShader(ShaderConstant.F_MVP),{
+    private async initShader(content: egret.DisplayObject){
+        let customFilter = new egret.CustomFilter(await getShader(ShaderConstant.VERTEX),await getShader(ShaderConstant.F_MVP),{
             iTime:0,
             ratio: 1334/750
         });
