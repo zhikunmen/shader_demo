@@ -66,6 +66,14 @@ var GameVc = (function (_super) {
                 this.viewGroup.removeChildren();
                 this.viewGroup.addChild(new Boom);
                 break;
+            case this.julia:
+                this.viewGroup.removeChildren();
+                this.viewGroup.addChild(new Julia);
+                break;
+            case this.fade:
+                this.viewGroup.removeChildren();
+                this.viewGroup.addChild(new Fade);
+                break;
         }
     };
     return GameVc;

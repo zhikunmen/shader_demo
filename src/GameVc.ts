@@ -18,6 +18,8 @@ class GameVc extends BaseEuiView {
     public water: eui.Button;
     public loading: eui.Button;
     public boom: eui.Button;
+    public julia:eui.Button;
+    public fade:eui.Button;
 
     protected initUI() {
         this.width = egret.MainContext.instance.stage.stageWidth;
@@ -70,6 +72,14 @@ class GameVc extends BaseEuiView {
             case this.boom:
                 this.viewGroup.removeChildren();
                 this.viewGroup.addChild(new Boom);
+                break;
+            case this.julia:
+                this.viewGroup.removeChildren();
+                this.viewGroup.addChild(new Julia);
+                break;
+            case this.fade:
+                this.viewGroup.removeChildren();
+                this.viewGroup.addChild(new Fade);
                 break;
         }
     }

@@ -1,229 +1,239 @@
 {
-	"groups":[
+	"groups": [
 		{
-			"keys":"checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,button_down_png,button_up_png,thumb_pb_png,track_pb_png,track_sb_png,bg_jpg,egret_icon_png,description_json,N1_png,N2_png,N3_png,N4_png,N5_png",
-			"name":"preload"
+			"keys": "checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,button_down_png,button_up_png,thumb_pb_png,track_pb_png,track_sb_png,bg_jpg,egret_icon_png,description_json,N1_png,N2_png,N3_png,N4_png,N5_png",
+			"name": "preload"
 		},
 		{
-			"keys":"f_point_glsl,f_ripple_glsl,f_shake_glsl,f_simple_glsl,f_sin_glsl,fragment_glsl,v_mvpMat_glsl,vertex_glsl,f_loading_glsl,f_water_glsl,f_mvp_glsl,f_boom_glsl",
-			"name":"shader"
+			"keys": "f_point_glsl,f_ripple_glsl,f_shake_glsl,f_simple_glsl,f_sin_glsl,fragment_glsl,v_mvpMat_glsl,vertex_glsl,f_loading_glsl,f_water_glsl,f_mvp_glsl,f_boom_glsl",
+			"name": "shader"
 		}
 	],
-	"resources":[
+	"resources": [
 		{
-			"name":"checkbox_select_disabled_png",
-			"type":"image",
-			"url":"assets/CheckBox/checkbox_select_disabled.png"
+			"name": "checkbox_select_disabled_png",
+			"type": "image",
+			"url": "assets/CheckBox/checkbox_select_disabled.png"
 		},
 		{
-			"name":"checkbox_select_down_png",
-			"type":"image",
-			"url":"assets/CheckBox/checkbox_select_down.png"
+			"name": "checkbox_select_down_png",
+			"type": "image",
+			"url": "assets/CheckBox/checkbox_select_down.png"
 		},
 		{
-			"name":"checkbox_select_up_png",
-			"type":"image",
-			"url":"assets/CheckBox/checkbox_select_up.png"
+			"name": "checkbox_select_up_png",
+			"type": "image",
+			"url": "assets/CheckBox/checkbox_select_up.png"
 		},
 		{
-			"name":"checkbox_unselect_png",
-			"type":"image",
-			"url":"assets/CheckBox/checkbox_unselect.png"
+			"name": "checkbox_unselect_png",
+			"type": "image",
+			"url": "assets/CheckBox/checkbox_unselect.png"
 		},
 		{
-			"name":"selected_png",
-			"type":"image",
-			"url":"assets/ItemRenderer/selected.png"
+			"name": "selected_png",
+			"type": "image",
+			"url": "assets/ItemRenderer/selected.png"
 		},
 		{
-			"name":"border_png",
-			"type":"image",
-			"url":"assets/Panel/border.png"
+			"name": "border_png",
+			"type": "image",
+			"url": "assets/Panel/border.png"
 		},
 		{
-			"name":"header_png",
-			"type":"image",
-			"url":"assets/Panel/header.png"
+			"name": "header_png",
+			"type": "image",
+			"url": "assets/Panel/header.png"
 		},
 		{
-			"name":"radiobutton_select_disabled_png",
-			"type":"image",
-			"url":"assets/RadioButton/radiobutton_select_disabled.png"
+			"name": "radiobutton_select_disabled_png",
+			"type": "image",
+			"url": "assets/RadioButton/radiobutton_select_disabled.png"
 		},
 		{
-			"name":"radiobutton_select_down_png",
-			"type":"image",
-			"url":"assets/RadioButton/radiobutton_select_down.png"
+			"name": "radiobutton_select_down_png",
+			"type": "image",
+			"url": "assets/RadioButton/radiobutton_select_down.png"
 		},
 		{
-			"name":"radiobutton_select_up_png",
-			"type":"image",
-			"url":"assets/RadioButton/radiobutton_select_up.png"
+			"name": "radiobutton_select_up_png",
+			"type": "image",
+			"url": "assets/RadioButton/radiobutton_select_up.png"
 		},
 		{
-			"name":"radiobutton_unselect_png",
-			"type":"image",
-			"url":"assets/RadioButton/radiobutton_unselect.png"
+			"name": "radiobutton_unselect_png",
+			"type": "image",
+			"url": "assets/RadioButton/radiobutton_unselect.png"
 		},
 		{
-			"name":"roundthumb_png",
-			"type":"image",
-			"url":"assets/ScrollBar/roundthumb.png"
+			"name": "roundthumb_png",
+			"type": "image",
+			"url": "assets/ScrollBar/roundthumb.png"
 		},
 		{
-			"name":"thumb_png",
-			"type":"image",
-			"url":"assets/Slider/thumb.png"
+			"name": "thumb_png",
+			"type": "image",
+			"url": "assets/Slider/thumb.png"
 		},
 		{
-			"name":"track_png",
-			"type":"image",
-			"url":"assets/Slider/track.png"
+			"name": "track_png",
+			"type": "image",
+			"url": "assets/Slider/track.png"
 		},
 		{
-			"name":"tracklight_png",
-			"type":"image",
-			"url":"assets/Slider/tracklight.png"
+			"name": "tracklight_png",
+			"type": "image",
+			"url": "assets/Slider/tracklight.png"
 		},
 		{
-			"name":"handle_png",
-			"type":"image",
-			"url":"assets/ToggleSwitch/handle.png"
+			"name": "handle_png",
+			"type": "image",
+			"url": "assets/ToggleSwitch/handle.png"
 		},
 		{
-			"name":"off_png",
-			"type":"image",
-			"url":"assets/ToggleSwitch/off.png"
+			"name": "off_png",
+			"type": "image",
+			"url": "assets/ToggleSwitch/off.png"
 		},
 		{
-			"name":"on_png",
-			"type":"image",
-			"url":"assets/ToggleSwitch/on.png"
+			"name": "on_png",
+			"type": "image",
+			"url": "assets/ToggleSwitch/on.png"
 		},
 		{
-			"name":"button_down_png",
-			"type":"image",
-			"url":"assets/Button/button_down.png"
+			"name": "button_down_png",
+			"type": "image",
+			"url": "assets/Button/button_down.png"
 		},
 		{
-			"name":"button_up_png",
-			"type":"image",
-			"url":"assets/Button/button_up.png"
+			"name": "button_up_png",
+			"type": "image",
+			"url": "assets/Button/button_up.png"
 		},
 		{
-			"name":"thumb_pb_png",
-			"type":"image",
-			"url":"assets/ProgressBar/thumb_pb.png"
+			"name": "thumb_pb_png",
+			"type": "image",
+			"url": "assets/ProgressBar/thumb_pb.png"
 		},
 		{
-			"name":"track_pb_png",
-			"type":"image",
-			"url":"assets/ProgressBar/track_pb.png"
+			"name": "track_pb_png",
+			"type": "image",
+			"url": "assets/ProgressBar/track_pb.png"
 		},
 		{
-			"name":"track_sb_png",
-			"type":"image",
-			"url":"assets/ScrollBar/track_sb.png"
+			"name": "track_sb_png",
+			"type": "image",
+			"url": "assets/ScrollBar/track_sb.png"
 		},
 		{
-			"name":"bg_jpg",
-			"type":"image",
-			"url":"assets/bg.jpg"
+			"name": "bg_jpg",
+			"type": "image",
+			"url": "assets/bg.jpg"
 		},
 		{
-			"name":"egret_icon_png",
-			"type":"image",
-			"url":"assets/egret_icon.png"
+			"name": "egret_icon_png",
+			"type": "image",
+			"url": "assets/egret_icon.png"
 		},
 		{
-			"name":"description_json",
-			"type":"json",
-			"url":"config/description.json"
+			"name": "description_json",
+			"type": "json",
+			"url": "config/description.json"
 		},
 		{
-			"name":"N1_png",
-			"type":"image",
-			"url":"assets/map/N1.png"
+			"name": "N1_png",
+			"type": "image",
+			"url": "assets/map/N1.png"
 		},
 		{
-			"name":"N2_png",
-			"type":"image",
-			"url":"assets/map/N2.png"
+			"name": "N2_png",
+			"type": "image",
+			"url": "assets/map/N2.png"
 		},
 		{
-			"name":"N3_png",
-			"type":"image",
-			"url":"assets/map/N3.png"
+			"name": "N3_png",
+			"type": "image",
+			"url": "assets/map/N3.png"
 		},
 		{
-			"name":"N4_png",
-			"type":"image",
-			"url":"assets/map/N4.png"
+			"name": "N4_png",
+			"type": "image",
+			"url": "assets/map/N4.png"
 		},
 		{
-			"name":"N5_png",
-			"type":"image",
-			"url":"assets/map/N5.png"
+			"name": "N5_png",
+			"type": "image",
+			"url": "assets/map/N5.png"
 		},
 		{
-			"name":"f_point_glsl",
-			"type":"bin",
-			"url":"shader/f_point.glsl"
+			"name": "f_point_glsl",
+			"type": "bin",
+			"url": "shader/f_point.glsl"
 		},
 		{
-			"name":"f_ripple_glsl",
-			"type":"bin",
-			"url":"shader/f_ripple.glsl"
+			"name": "f_ripple_glsl",
+			"type": "bin",
+			"url": "shader/f_ripple.glsl"
 		},
 		{
-			"name":"f_shake_glsl",
-			"type":"bin",
-			"url":"shader/f_shake.glsl"
+			"name": "f_shake_glsl",
+			"type": "bin",
+			"url": "shader/f_shake.glsl"
 		},
 		{
-			"name":"f_simple_glsl",
-			"type":"bin",
-			"url":"shader/f_simple.glsl"
+			"name": "f_simple_glsl",
+			"type": "bin",
+			"url": "shader/f_simple.glsl"
 		},
 		{
-			"name":"f_sin_glsl",
-			"type":"bin",
-			"url":"shader/f_sin.glsl"
+			"name": "f_sin_glsl",
+			"type": "bin",
+			"url": "shader/f_sin.glsl"
 		},
 		{
-			"name":"fragment_glsl",
-			"type":"bin",
-			"url":"shader/fragment.glsl"
+			"name": "fragment_glsl",
+			"type": "bin",
+			"url": "shader/fragment.glsl"
 		},
 		{
-			"name":"v_mvpMat_glsl",
-			"type":"bin",
-			"url":"shader/v_mvpMat.glsl"
+			"name": "v_mvpMat_glsl",
+			"type": "bin",
+			"url": "shader/v_mvpMat.glsl"
 		},
 		{
-			"name":"vertex_glsl",
-			"type":"bin",
-			"url":"shader/vertex.glsl"
+			"name": "vertex_glsl",
+			"type": "bin",
+			"url": "shader/vertex.glsl"
 		},
 		{
-			"name":"f_loading_glsl",
-			"type":"bin",
-			"url":"shader/f_loading.glsl"
+			"name": "f_loading_glsl",
+			"type": "bin",
+			"url": "shader/f_loading.glsl"
 		},
 		{
-			"name":"f_water_glsl",
-			"type":"bin",
-			"url":"shader/f_water.glsl"
+			"name": "f_water_glsl",
+			"type": "bin",
+			"url": "shader/f_water.glsl"
 		},
 		{
-			"name":"f_mvp_glsl",
-			"type":"bin",
-			"url":"shader/f_mvp.glsl"
+			"name": "f_mvp_glsl",
+			"type": "bin",
+			"url": "shader/f_mvp.glsl"
 		},
 		{
-			"name":"f_boom_glsl",
-			"type":"bin",
-			"url":"shader/f_boom.glsl"
+			"name": "f_boom_glsl",
+			"type": "bin",
+			"url": "shader/f_boom.glsl"
+		},
+		{
+			"name": "f_julia_glsl",
+			"type": "bin",
+			"url": "shader/f_julia.glsl"
+		},
+		{
+			"name": "f_fade_glsl",
+			"type": "bin",
+			"url": "shader/f_fade.glsl"
 		}
 	]
 }

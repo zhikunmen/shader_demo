@@ -22,6 +22,10 @@ var ShaderConstant;
     ShaderConstant["F_MVP"] = "f_mvp.glsl";
     /** 爆炸 片元着色器 */
     ShaderConstant["F_BOOM"] = "f_boom.glsl";
+    /** 分形 片元着色器 */
+    ShaderConstant["F_JULIA"] = "f_julia.glsl";
+    /** 溶解 片元着色器*/
+    ShaderConstant["F_FADE"] = "f_fade.glsl";
     /** mvp矩阵 顶点着色器 */
     ShaderConstant["V_MVPMAT"] = "v_mvpMat.glsl";
 })(ShaderConstant || (ShaderConstant = {}));
