@@ -18,7 +18,7 @@ void main(){
     vec4 fg=texture2D(uSampler,vTextureCoord);
     if(fg.a==0.)discard;
     vec2 uv=vTextureCoord.xy;
-    // 初相位
+    // 相位计算
     float initialPhase=frequency*iTime;
     // 代入正弦曲线公式计算Y值 y=A*sin(Vx±I)+Offset
     float y=amplitude*sin((angularVelocity*uv.x)+initialPhase)+offset;
