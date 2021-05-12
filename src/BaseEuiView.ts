@@ -2,9 +2,12 @@ class BaseEuiView extends eui.Component{
 
     constructor(){
         super();
-        this.initUI();
     }
 
+    protected childrenCreated(){
+        super.childrenCreated();
+        this.initUI();
+    }
 
     protected initUI(){
     }

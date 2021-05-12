@@ -15,7 +15,7 @@ class Point extends BaseEuiView {
 
     private async initShader(content: egret.DisplayObject){
         content.filters = [new egret.CustomFilter(await getShader(ShaderConstant.VERTEX),await getShader(ShaderConstant.F_POINT),{
-            ratio: 1334/750
+            ratio: content.height/content.width
         })];
     }
 }

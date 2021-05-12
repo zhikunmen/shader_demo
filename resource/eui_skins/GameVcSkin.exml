@@ -13,8 +13,10 @@
 	<e:Button id="simple" label="Simple" x="417" y="57"/>
 	<e:Button id="shake" label="Shake" x="237" y="124"/>
 	<e:Button id="Rotation" label="roatation" x="415" y="124"/>
-	<e:Button id="loading" label="loading" x="586" y="124"/>
+	<e:Button id="grain" label="grain" x="586" y="124"/>
 	<e:Button id="boom" label="Boom" x="71" y="194"/>
 	<e:Button id="fade" label="Fade" x="416" y="197"/>
 	<e:Button id="julia" label="Julia" x="237" y="195"/>
+	<e:Button id="fold" label="Fold" x="586" y="197"/>
+	<e:Button id="blur" label="Blur" x="71" y="272"/>
 </e:Skin>

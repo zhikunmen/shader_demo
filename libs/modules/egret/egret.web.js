@@ -3285,7 +3285,7 @@ var egret;
         }
         egret.sys.mainCanvas = mainCanvas;
         function createCanvas(width, height) {
-            var canvas = document.createElement("canvas");
+            var canvas = document.createElement('canvas');
             if (!isNaN(width) && !isNaN(height)) {
                 canvas.width = width;
                 canvas.height = height;
@@ -3333,7 +3333,7 @@ var egret;
             var gl = null;
             //todo 是否使用chrome源码names
             //let contextNames = ["moz-webgl", "webkit-3d", "experimental-webgl", "webgl", "3d"];
-            var names = ["webgl", "experimental-webgl"];
+            var names = ['webgl2', 'experimental-webgl'];
             for (var i = 0; i < names.length; ++i) {
                 try {
                     gl = surface.getContext(names[i], options);
@@ -3462,7 +3462,7 @@ var egret;
                 }
                 //尺寸没有变化时,将绘制属性重置
                 if (!change) {
-                    canvasRenderBuffer.context.globalCompositeOperation = "source-over";
+                    canvasRenderBuffer.context.globalCompositeOperation = 'source-over';
                     canvasRenderBuffer.context.setTransform(1, 0, 0, 1, 0, 0);
                     canvasRenderBuffer.context.globalAlpha = 1;
                 }

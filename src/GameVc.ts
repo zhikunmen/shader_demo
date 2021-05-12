@@ -16,10 +16,12 @@ class GameVc extends BaseEuiView {
     public Rotation:eui.Button;
     public mvp: eui.Button;
     public water: eui.Button;
-    public loading: eui.Button;
+    public grain:eui.Button;
     public boom: eui.Button;
     public julia:eui.Button;
     public fade:eui.Button;
+    public fold:eui.Button;
+    public blur:eui.Button;
 
     protected initUI() {
         this.width = egret.MainContext.instance.stage.stageWidth;
@@ -65,7 +67,7 @@ class GameVc extends BaseEuiView {
                 this.viewGroup.removeChildren();
                 this.viewGroup.addChild(new Water);
                 break;
-            case this.loading:
+            case this.grain:
                 this.viewGroup.removeChildren();
                 this.viewGroup.addChild(new Loading);
                 break;
@@ -81,6 +83,14 @@ class GameVc extends BaseEuiView {
                 this.viewGroup.removeChildren();
                 this.viewGroup.addChild(new Fade);
                 break;
+            case this.fold:
+                this.viewGroup.removeChildren();
+                this.viewGroup.addChild(new Fold);
+                break;
+            case this.blur:
+                this.viewGroup.removeChildren();
+                this.viewGroup.addChild(new Blur);
+            break;
         }
     }
 }

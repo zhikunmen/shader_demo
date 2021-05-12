@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<e:Skin class="BlurSkin"
+	 width="750"
+	height="1334" xmlns:e="http://ns.egret.com/eui">
+	<e:Image id="img" source="bg_jpg" width="750" x="0" height="1334"/>
+	<e:HSlider id="slider" y="1161" horizontalCenter="0" width="300"/>
+</e:Skin>

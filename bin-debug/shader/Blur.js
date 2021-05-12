@@ -43,40 +43,38 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var Point = (function (_super) {
-    __extends(Point, _super);
-    function Point() {
-        return _super.call(this) || this;
+var Blur = (function (_super) {
+    __extends(Blur, _super);
+    function Blur() {
+        var _this = _super.call(this) || this;
+        _this.add = true;
+        _this.skinName = 'BlurSkin';
+        return _this;
     }
-    Point.prototype.initUI = function () {
-        var content = new eui.Image('bg_jpg');
-        var stage = egret.MainContext.instance.stage;
-        content.width = stage.stageWidth;
-        content.height = stage.stageHeight;
-        this.addChild(content);
-        this.initShader(content);
-    };
-    Point.prototype.initShader = function (content) {
+    Blur.prototype.initUI = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, _b, _c, _d;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var customFilter, _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        _a = content;
-                        _c = (_b = egret.CustomFilter).bind;
+                        _b = (_a = egret.CustomFilter).bind;
                         return [4 /*yield*/, getShader(ShaderConstant.VERTEX)];
                     case 1:
-                        _d = [void 0, _e.sent()];
-                        return [4 /*yield*/, getShader(ShaderConstant.F_POINT)];
+                        _c = [void 0, _d.sent()];
+                        return [4 /*yield*/, getShader(ShaderConstant.F_BLUR)];
                     case 2:
-                        _a.filters = [new (_c.apply(_b, _d.concat([_e.sent(), {
-                                    ratio: content.height / content.width
-                                }])))()];
+                        customFilter = new (_b.apply(_a, _c.concat([_d.sent(), {
+                                ratio: 0.0,
+                            }])))();
+                        this.img.filters = [customFilter];
+                        eui.Binding.bindHandler(this.slider, ["value"], function (value) {
+                            customFilter.uniforms.ratio = value * 1;
+                        }, this);
                         return [2 /*return*/];
                 }
             });
         });
     };
-    return Point;
+    return Blur;
 }(BaseEuiView));
-__reflect(Point.prototype, "Point");
+__reflect(Blur.prototype, "Blur");

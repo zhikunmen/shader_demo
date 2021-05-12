@@ -43,40 +43,55 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var Point = (function (_super) {
-    __extends(Point, _super);
-    function Point() {
-        return _super.call(this) || this;
+var Fold = (function (_super) {
+    __extends(Fold, _super);
+    function Fold() {
+        var _this = _super.call(this) || this;
+        _this.add = true;
+        return _this;
     }
-    Point.prototype.initUI = function () {
+    Fold.prototype.initUI = function () {
+        var _this = this;
         var content = new eui.Image('bg_jpg');
         var stage = egret.MainContext.instance.stage;
-        content.width = stage.stageWidth;
-        content.height = stage.stageHeight;
+        this.setWH(stage.stageWidth, stage.stageHeight);
+        content.setWH(this.width, this.height);
         this.addChild(content);
         this.initShader(content);
+        this.text = new eui.Label();
+        this.text.horizontalCenter = 0;
+        this.text.bottom = 100;
+        this.addChild(this.text);
+        this.text.addEventListener(egret.TouchEvent.TOUCH_TAP, function () {
+            _this.add = !_this.add;
+        }, this);
     };
-    Point.prototype.initShader = function (content) {
+    Fold.prototype.initShader = function (content) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, _b, _c, _d;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var _this = this;
+            var customFilter, _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        _a = content;
-                        _c = (_b = egret.CustomFilter).bind;
+                        _b = (_a = egret.CustomFilter).bind;
                         return [4 /*yield*/, getShader(ShaderConstant.VERTEX)];
                     case 1:
-                        _d = [void 0, _e.sent()];
-                        return [4 /*yield*/, getShader(ShaderConstant.F_POINT)];
+                        _c = [void 0, _d.sent()];
+                        return [4 /*yield*/, getShader(ShaderConstant.F_FOLD)];
                     case 2:
-                        _a.filters = [new (_c.apply(_b, _d.concat([_e.sent(), {
-                                    ratio: content.height / content.width
-                                }])))()];
+                        customFilter = new (_b.apply(_a, _c.concat([_d.sent(), {
+                                iTime: 0.0,
+                            }])))();
+                        content.filters = [customFilter];
+                        egret.startTick(function (timeStamp) {
+                            customFilter.uniforms.iTime += _this.add ? 0.01 : -0.01;
+                            return false;
+                        }, this);
                         return [2 /*return*/];
                 }
             });
         });
     };
-    return Point;
+    return Fold;
 }(BaseEuiView));
-__reflect(Point.prototype, "Point");
+__reflect(Fold.prototype, "Fold");

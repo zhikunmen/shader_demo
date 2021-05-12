@@ -26,6 +26,10 @@ var ShaderConstant;
     ShaderConstant["F_JULIA"] = "f_julia.glsl";
     /** 溶解 片元着色器*/
     ShaderConstant["F_FADE"] = "f_fade.glsl";
+    /** 折叠效果 片元着色器 */
+    ShaderConstant["F_FOLD"] = "f_fold.glsl";
+    /** 高斯模糊 片元着色器 */
+    ShaderConstant["F_BLUR"] = "f_blur.glsl";
     /** mvp矩阵 顶点着色器 */
     ShaderConstant["V_MVPMAT"] = "v_mvpMat.glsl";
 })(ShaderConstant || (ShaderConstant = {}));

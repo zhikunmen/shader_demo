@@ -58,7 +58,7 @@ var GameVc = (function (_super) {
                 this.viewGroup.removeChildren();
                 this.viewGroup.addChild(new Water);
                 break;
-            case this.loading:
+            case this.grain:
                 this.viewGroup.removeChildren();
                 this.viewGroup.addChild(new Loading);
                 break;
@@ -73,6 +73,14 @@ var GameVc = (function (_super) {
             case this.fade:
                 this.viewGroup.removeChildren();
                 this.viewGroup.addChild(new Fade);
+                break;
+            case this.fold:
+                this.viewGroup.removeChildren();
+                this.viewGroup.addChild(new Fold);
+                break;
+            case this.blur:
+                this.viewGroup.removeChildren();
+                this.viewGroup.addChild(new Blur);
                 break;
         }
     };

@@ -234,6 +234,16 @@
 			"name": "f_fade_glsl",
 			"type": "bin",
 			"url": "shader/f_fade.glsl"
+		},
+		{
+			"name": "f_fold_glsl",
+			"type": "bin",
+			"url": "shader/f_fold.glsl"
+		},
+		{
+			"name": "f_blur_glsl",
+			"type": "bin",
+			"url": "shader/f_blur.glsl"
 		}
 	]
 }
