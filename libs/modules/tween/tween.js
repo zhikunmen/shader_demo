@@ -788,16 +788,6 @@ var egret;
             if (override) {
                 Tween.removeTweens(target);
             }
-            //只有在舞台的 才会在移除舞台时自动移除
-            if (Tween.AUTOREMOVE && target && target.stage && target.once && !target['__tween_remove_once']) {
-                target['__tween_remove_once'] = true;
-                target.once(egret.Event.REMOVED_FROM_STAGE, function () {
-                    if (target) {
-                        Tween.removeTweens(target);
-                        target['__tween_remove_once'] = false;
-                    }
-                }, this);
-            }
             return new Tween(target, props, pluginData);
         };
         /**
@@ -1462,10 +1452,6 @@ var egret;
          * @private
          */
         Tween._inited = false;
-        /**
-         * autoRemove 移除舞台时移除对应Tween
-         */
-        Tween.AUTOREMOVE = false;
         Tween._lastTime = 0;
         return Tween;
     }(egret.EventDispatcher));

@@ -555,10 +555,6 @@ declare namespace egret {
          */
         private static _inited;
         /**
-         * autoRemove 移除舞台时移除对应Tween
-         */
-        static AUTOREMOVE: boolean;
-        /**
          * @private
          */
         private _target;

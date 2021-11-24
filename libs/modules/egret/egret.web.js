@@ -428,25 +428,13 @@ var egret;
                     WebAudioDecode.isDecoding = false;
                     WebAudioDecode.decodeAudios();
                 }, function () {
-                    egret.log("sound decode error " + (decodeInfo.url ? decodeInfo.url : ""));
+                    egret.log('sound decode error');
                     if (decodeInfo["fail"]) {
                         decodeInfo["fail"]();
                     }
                     WebAudioDecode.isDecoding = false;
                     WebAudioDecode.decodeAudios();
                 });
-            };
-            /**
-             * ios音效问题
-             *  */
-            WebAudioDecode.audioResume = function () {
-                var ctx = WebAudioDecode.ctx;
-                if (ctx && ctx.state !== 'running' && ctx.state !== "closed") {
-                    try {
-                        ctx.resume();
-                    }
-                    catch (e) { }
-                }
             };
             /**
              * @private
@@ -1589,7 +1577,7 @@ var egret;
             /**
              * @private
              */
-            WebHttpRequest.prototype.onload = function (e) {
+            WebHttpRequest.prototype.onload = function () {
                 var self = this;
                 var xhr = this._xhr;
                 var url = this._url;
@@ -1599,7 +1587,7 @@ var egret;
                         if (true && !self.hasEventListener(egret.IOErrorEvent.IO_ERROR)) {
                             egret.$error(1011, url);
                         }
-                        self.dispatchEventWith(egret.IOErrorEvent.IO_ERROR, false, e);
+                        self.dispatchEventWith(egret.IOErrorEvent.IO_ERROR);
                     }
                     else {
                         self.dispatchEventWith(egret.Event.COMPLETE);
@@ -1609,14 +1597,14 @@ var egret;
             /**
              * @private
              */
-            WebHttpRequest.prototype.onerror = function (e) {
+            WebHttpRequest.prototype.onerror = function () {
                 var url = this._url;
                 var self = this;
                 window.setTimeout(function () {
                     if (true && !self.hasEventListener(egret.IOErrorEvent.IO_ERROR)) {
                         egret.$error(1011, url);
                     }
-                    self.dispatchEventWith(egret.IOErrorEvent.IO_ERROR, false, e);
+                    self.dispatchEventWith(egret.IOErrorEvent.IO_ERROR);
                 }, 0);
             };
             return WebHttpRequest;
@@ -1714,8 +1702,7 @@ var egret;
                     && url.indexOf("wxLocalResource:") != 0 //微信专用不能使用 blob
                     && url.indexOf("data:") != 0
                     && url.indexOf("http:") != 0
-                    && url.indexOf("https:") != 0
-                    && url.indexOf("shopee:") != 0) {
+                    && url.indexOf("https:") != 0) {
                     var request = this.request;
                     if (!request) {
                         request = this.request = new egret.web.WebHttpRequest();
@@ -2770,7 +2757,6 @@ var egret;
                  * @private
                  */
                 _this.onTouchBegin = function (event) {
-                    web.WebAudioDecode.audioResume(); //音效问题
                     var location = _this.getLocation(event);
                     _this.touch.onTouchBegin(location.x, location.y, event.identifier);
                 };
@@ -3120,11 +3106,7 @@ var egret;
                     }
                     catch (e) {
                         canUseWebAudio = false;
-                        Html5Capatibility._audioType = AudioType.HTML5_AUDIO; //不可使用webAudio 强制转为htmlaudio
                     }
-                }
-                else {
-                    Html5Capatibility._audioType = AudioType.HTML5_AUDIO; //不可使用webAudio 强制转为htmlaudio
                 }
                 var audioType = Html5Capatibility._audioType;
                 var checkAudioType;
@@ -3939,14 +3921,14 @@ var egret;
                 this.containerFps.appendChild(divDatas);
                 var left = document.createElement('div');
                 left.style['float'] = 'left';
-                left.innerHTML = "Draw<br/>GPU Size<br/>Cost";
+                left.innerHTML = "Draw<br/>Cost";
                 divDatas.appendChild(left);
                 var right = document.createElement('div');
                 right.style.paddingLeft = left.offsetWidth + 20 + "px";
                 divDatas.appendChild(right);
                 var draw = document.createElement('div');
                 this.divDraw = draw;
-                draw.innerHTML = "0<br/>0<br/>";
+                draw.innerHTML = "0<br/>";
                 right.appendChild(draw);
                 var cost = document.createElement('div');
                 this.divCost = cost;
@@ -4045,7 +4027,7 @@ var egret;
                 var fpsOutput = numFps + " FPS " + this.renderMode;
                 if (this.showPanle) {
                     fpsOutput += "<br/>min" + fpsMin + " max" + fpsMax + " avg" + fpsAvg;
-                    this.divDraw.innerHTML = this.lastNumDraw + "<br/>" + window['RES'].profile() + "m<br/>";
+                    this.divDraw.innerHTML = this.lastNumDraw + "<br/>";
                     this.divCost.innerHTML = "<font  style=\"color:#18fefe\">" + numCostTicker + "<font/> <font  style=\"color:#ff0000\">" + numCostRender + "<font/>";
                 }
                 this.fps.innerHTML = fpsOutput;
@@ -4946,11 +4928,6 @@ var egret;
                  * @private
                  */
                 _this.loaded = false;
-                /**
-                 * @private
-                 * when the user agent is trying to fetch media data, but data is unexpectedly not forthcoming.
-                 */
-                _this.stalled = false;
                 return _this;
             }
             Object.defineProperty(HtmlSound.prototype, "length", {
@@ -4976,7 +4953,6 @@ var egret;
                 var audio = new Audio(url);
                 audio.addEventListener("canplaythrough", onAudioLoaded);
                 audio.addEventListener("error", onAudioError);
-                audio.addEventListener("stalled", onAudioStalled);
                 var ua = navigator.userAgent.toLowerCase();
                 if (ua.indexOf("firefox") >= 0) {
                     audio.autoplay = !0;
@@ -4991,11 +4967,6 @@ var egret;
                 this.originAudio = audio;
                 if (HtmlSound.clearAudios[this.url]) {
                     delete HtmlSound.clearAudios[this.url];
-                }
-                function onAudioStalled() {
-                    removeListeners();
-                    self.stalled = true;
-                    self.dispatchEventWith(egret.Event.COMPLETE);
                 }
                 function onAudioLoaded() {
                     HtmlSound.$recycle(self.url, audio);
@@ -5017,7 +4988,6 @@ var egret;
                 function removeListeners() {
                     audio.removeEventListener("canplaythrough", onAudioLoaded);
                     audio.removeEventListener("error", onAudioError);
-                    audio.removeEventListener("stalled", onAudioStalled);
                     if (ie) {
                         document.body.removeChild(audio);
                     }
@@ -5031,10 +5001,6 @@ var egret;
                 loops = +loops || 0;
                 if (true && this.loaded == false) {
                     egret.$error(1049);
-                }
-                if (true && this.stalled) {
-                    egret.$error(1048);
-                    return;
                 }
                 var audio = HtmlSound.$pop(this.url);
                 if (audio == null) {
@@ -5672,107 +5638,42 @@ var egret;
                     }
                 }
                 if (meshVertices) {
-                    if (web.isIOS14Device) {
-                        var vertData = [];
-                        // 计算索引位置与赋值
-                        var vertices = this.vertices;
-                        var verticesUint32View = this._verticesUint32View;
-                        var index = this.vertexIndex * this.vertSize;
-                        // 缓存顶点数组
-                        var i = 0, iD = 0, l = 0;
-                        var u = 0, v = 0, x = 0, y = 0;
-                        for (i = 0, l = meshUVs.length; i < l; i += 2) {
-                            iD = index + i * 5 / 2;
-                            x = meshVertices[i];
-                            y = meshVertices[i + 1];
-                            u = meshUVs[i];
-                            v = meshUVs[i + 1];
-                            if (rotated) {
-                                vertData.push([
-                                    a * x + c * y + tx,
-                                    b * x + d * y + ty,
-                                    (sourceX + (1.0 - v) * sourceHeight) / textureSourceWidth,
-                                    (sourceY + u * sourceWidth) / textureSourceHeight,
-                                ]);
-                            }
-                            else {
-                                vertData.push([
-                                    a * x + c * y + tx,
-                                    b * x + d * y + ty,
-                                    (sourceX + u * sourceWidth) / textureSourceWidth,
-                                    (sourceY + v * sourceHeight) / textureSourceHeight,
-                                ]);
-                            }
-                            verticesUint32View[iD + 4] = alpha;
+                    // 计算索引位置与赋值
+                    var vertices = this.vertices;
+                    var verticesUint32View = this._verticesUint32View;
+                    var index = this.vertexIndex * this.vertSize;
+                    // 缓存顶点数组
+                    var i = 0, iD = 0, l = 0;
+                    var u = 0, v = 0, x = 0, y = 0;
+                    for (i = 0, l = meshUVs.length; i < l; i += 2) {
+                        iD = index + i * 5 / 2;
+                        x = meshVertices[i];
+                        y = meshVertices[i + 1];
+                        u = meshUVs[i];
+                        v = meshUVs[i + 1];
+                        // xy
+                        vertices[iD + 0] = a * x + c * y + tx;
+                        vertices[iD + 1] = b * x + d * y + ty;
+                        // uv
+                        if (rotated) {
+                            vertices[iD + 2] = (sourceX + (1.0 - v) * sourceHeight) / textureSourceWidth;
+                            vertices[iD + 3] = (sourceY + u * sourceWidth) / textureSourceHeight;
                         }
-                        for (var i_1 = 0; i_1 < meshIndices.length; i_1 += 3) {
-                            var data0 = vertData[meshIndices[i_1]];
-                            vertices[index++] = data0[0];
-                            vertices[index++] = data0[1];
-                            vertices[index++] = data0[2];
-                            vertices[index++] = data0[3];
-                            verticesUint32View[index++] = alpha;
-                            var data1 = vertData[meshIndices[i_1 + 1]];
-                            vertices[index++] = data1[0];
-                            vertices[index++] = data1[1];
-                            vertices[index++] = data1[2];
-                            vertices[index++] = data1[3];
-                            verticesUint32View[index++] = alpha;
-                            var data2 = vertData[meshIndices[i_1 + 2]];
-                            vertices[index++] = data2[0];
-                            vertices[index++] = data2[1];
-                            vertices[index++] = data2[2];
-                            vertices[index++] = data2[3];
-                            verticesUint32View[index++] = alpha;
-                            // 填充数据
-                            vertices[index++] = data2[0];
-                            vertices[index++] = data2[1];
-                            vertices[index++] = data2[2];
-                            vertices[index++] = data2[3];
-                            verticesUint32View[index++] = alpha;
+                        else {
+                            vertices[iD + 2] = (sourceX + u * sourceWidth) / textureSourceWidth;
+                            vertices[iD + 3] = (sourceY + v * sourceHeight) / textureSourceHeight;
                         }
-                        var meshNum = meshIndices.length / 3;
-                        this.vertexIndex += 4 * meshNum;
-                        this.indexIndex += 6 * meshNum;
+                        // alpha
+                        verticesUint32View[iD + 4] = alpha;
                     }
-                    else {
-                        // 计算索引位置与赋值
-                        var vertices = this.vertices;
-                        var verticesUint32View = this._verticesUint32View;
-                        var index = this.vertexIndex * this.vertSize;
-                        // 缓存顶点数组
-                        var i = 0, iD = 0, l = 0;
-                        var u = 0, v = 0, x = 0, y = 0;
-                        for (i = 0, l = meshUVs.length; i < l; i += 2) {
-                            iD = index + i * 5 / 2;
-                            x = meshVertices[i];
-                            y = meshVertices[i + 1];
-                            u = meshUVs[i];
-                            v = meshUVs[i + 1];
-                            // xy
-                            vertices[iD + 0] = a * x + c * y + tx;
-                            vertices[iD + 1] = b * x + d * y + ty;
-                            // uv
-                            if (rotated) {
-                                vertices[iD + 2] = (sourceX + (1.0 - v) * sourceHeight) / textureSourceWidth;
-                                vertices[iD + 3] = (sourceY + u * sourceWidth) / textureSourceHeight;
-                            }
-                            else {
-                                vertices[iD + 2] = (sourceX + u * sourceWidth) / textureSourceWidth;
-                                vertices[iD + 3] = (sourceY + v * sourceHeight) / textureSourceHeight;
-                            }
-                            // alpha
-                            verticesUint32View[iD + 4] = alpha;
+                    // 缓存索引数组
+                    if (this.hasMesh) {
+                        for (var i_1 = 0, l_1 = meshIndices.length; i_1 < l_1; ++i_1) {
+                            this.indicesForMesh[this.indexIndex + i_1] = meshIndices[i_1] + this.vertexIndex;
                         }
-                        // 缓存索引数组
-                        if (this.hasMesh) {
-                            for (var i_2 = 0, l_1 = meshIndices.length; i_2 < l_1; ++i_2) {
-                                this.indicesForMesh[this.indexIndex + i_2] = meshIndices[i_2] + this.vertexIndex;
-                            }
-                        }
-                        this.vertexIndex += meshUVs.length / 2;
-                        this.indexIndex += meshIndices.length;
                     }
+                    this.vertexIndex += meshUVs.length / 2;
+                    this.indexIndex += meshIndices.length;
                 }
                 else {
                     var width = textureSourceWidth;
@@ -5880,12 +5781,6 @@ var egret;
         }());
         web.WebGLVertexArrayObject = WebGLVertexArrayObject;
         __reflect(WebGLVertexArrayObject.prototype, "egret.web.WebGLVertexArrayObject");
-        web.isIOS14Device = (function () {
-            return egret.Capabilities.runtimeType == egret.RuntimeType.WEB
-                && egret.Capabilities.os == 'iOS'
-                && egret.Capabilities.isMobile
-                && /iPhone OS 14/.test(window.navigator.userAgent);
-        })();
     })(web = egret.web || (egret.web = {}));
 })(egret || (egret = {}));
 //////////////////////////////////////////////////////////////////////////////////////
@@ -6078,9 +5973,6 @@ var egret;
          */
         var WebGLRenderContext = (function () {
             function WebGLRenderContext(width, height) {
-                this.vertexCountPerTriangle = 3;
-                this.triangleCountPerQuad = 2;
-                this.dataCountPerVertex = 5;
                 //
                 this._defaultEmptyTexture = null;
                 this.glID = null;
@@ -6104,7 +5996,7 @@ var egret;
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
                 this.drawCmdManager = new web.WebGLDrawCmdManager();
                 this.vao = new web.WebGLVertexArrayObject();
-                this.setGlobalCompositeOperation('source-over');
+                this.setGlobalCompositeOperation("source-over");
             }
             WebGLRenderContext.getInstance = function (width, height) {
                 if (this.instance) {
@@ -6255,8 +6147,8 @@ var egret;
             };
             WebGLRenderContext.prototype.initWebGL = function () {
                 this.onResize();
-                this.surface.addEventListener('webglcontextlost', this.handleContextLost.bind(this), false);
-                this.surface.addEventListener('webglcontextrestored', this.handleContextRestored.bind(this), false);
+                this.surface.addEventListener("webglcontextlost", this.handleContextLost.bind(this), false);
+                this.surface.addEventListener("webglcontextrestored", this.handleContextRestored.bind(this), false);
                 this.getWebGLContext();
                 var gl = this.context;
                 this.$maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
@@ -6471,7 +6363,7 @@ var egret;
             });
             WebGLRenderContext.prototype.getWebGLTexture = function (bitmapData) {
                 if (!bitmapData.webGLTexture) {
-                    if (bitmapData.format == 'image' && !bitmapData.hasCompressed2d()) {
+                    if (bitmapData.format == "image" && !bitmapData.hasCompressed2d()) {
                         bitmapData.webGLTexture = this.createTexture(bitmapData.source);
                     }
                     else if (bitmapData.hasCompressed2d()) {
@@ -6496,7 +6388,7 @@ var egret;
                     }
                     if (bitmapData.webGLTexture) {
                         //todo 默认值
-                        bitmapData.webGLTexture['smoothing'] = true;
+                        bitmapData.webGLTexture["smoothing"] = true;
                     }
                 }
                 return bitmapData.webGLTexture;
@@ -6508,9 +6400,9 @@ var egret;
                 if (x != 0 || y != 0 || width != this.surface.width || height != this.surface.height) {
                     var buffer = this.currentBuffer;
                     if (buffer.$hasScissor) {
-                        this.setGlobalCompositeOperation('destination-out');
+                        this.setGlobalCompositeOperation("destination-out");
                         this.drawRect(x, y, width, height);
-                        this.setGlobalCompositeOperation('source-over');
+                        this.setGlobalCompositeOperation("source-over");
                     }
                     else {
                         var m = buffer.globalMatrix;
@@ -6524,9 +6416,9 @@ var egret;
                             this.disableScissor();
                         }
                         else {
-                            this.setGlobalCompositeOperation('destination-out');
+                            this.setGlobalCompositeOperation("destination-out");
                             this.drawRect(x, y, width, height);
-                            this.setGlobalCompositeOperation('source-over');
+                            this.setGlobalCompositeOperation("source-over");
                         }
                     }
                 }
@@ -6551,9 +6443,9 @@ var egret;
                 var texture;
                 var offsetX;
                 var offsetY;
-                if (image['texture'] || (image.source && image.source['texture'])) {
+                if (image["texture"] || (image.source && image.source["texture"])) {
                     // 如果是render target
-                    texture = image['texture'] || image.source['texture'];
+                    texture = image["texture"] || image.source["texture"];
                     buffer.saveTransform();
                     offsetX = buffer.$offsetX;
                     offsetY = buffer.$offsetY;
@@ -6570,7 +6462,7 @@ var egret;
                     return;
                 }
                 this.drawTexture(texture, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, imageSourceWidth, imageSourceHeight, undefined, undefined, undefined, undefined, rotated, smoothing);
-                if (image.source && image.source['texture']) {
+                if (image.source && image.source["texture"]) {
                     buffer.$offsetX = offsetX;
                     buffer.$offsetY = offsetY;
                     buffer.restoreTransform();
@@ -6587,9 +6479,9 @@ var egret;
                 var texture;
                 var offsetX;
                 var offsetY;
-                if (image['texture'] || (image.source && image.source['texture'])) {
+                if (image["texture"] || (image.source && image.source["texture"])) {
                     // 如果是render target
-                    texture = image['texture'] || image.source['texture'];
+                    texture = image["texture"] || image.source["texture"];
                     buffer.saveTransform();
                     offsetX = buffer.$offsetX;
                     offsetY = buffer.$offsetY;
@@ -6606,7 +6498,7 @@ var egret;
                     return;
                 }
                 this.drawTexture(texture, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, imageSourceWidth, imageSourceHeight, meshUVs, meshVertices, meshIndices, bounds, rotated, smoothing);
-                if (image['texture'] || (image.source && image.source['texture'])) {
+                if (image["texture"] || (image.source && image.source["texture"])) {
                     buffer.$offsetX = offsetX;
                     buffer.$offsetY = offsetY;
                     buffer.restoreTransform();
@@ -6620,43 +6512,23 @@ var egret;
                 if (this.contextLost || !texture || !buffer) {
                     return;
                 }
-                var count;
-                if (web.isIOS14Device) {
-                    var meshNum = meshIndices && (meshIndices.length / 3) || 0;
-                    if (meshIndices) {
-                        if (this.vao.reachMaxSize(meshNum * 4, meshNum * 6)) {
-                            this.$drawWebGL();
-                        }
+                if (meshVertices && meshIndices) {
+                    if (this.vao.reachMaxSize(meshVertices.length / 2, meshIndices.length)) {
+                        this.$drawWebGL();
                     }
-                    else {
-                        if (this.vao.reachMaxSize()) {
-                            this.$drawWebGL();
-                        }
-                    }
-                    if (smoothing != undefined && texture['smoothing'] != smoothing) {
-                        this.drawCmdManager.pushChangeSmoothing(texture, smoothing);
-                    }
-                    count = meshIndices ? meshNum * 2 : 2;
                 }
                 else {
-                    if (meshVertices && meshIndices) {
-                        if (this.vao.reachMaxSize(meshVertices.length / 2, meshIndices.length)) {
-                            this.$drawWebGL();
-                        }
+                    if (this.vao.reachMaxSize()) {
+                        this.$drawWebGL();
                     }
-                    else {
-                        if (this.vao.reachMaxSize()) {
-                            this.$drawWebGL();
-                        }
-                    }
-                    if (smoothing != undefined && texture['smoothing'] != smoothing) {
-                        this.drawCmdManager.pushChangeSmoothing(texture, smoothing);
-                    }
-                    if (meshUVs) {
-                        this.vao.changeToMeshIndices();
-                    }
-                    count = meshIndices ? meshIndices.length / 3 : 2;
                 }
+                if (smoothing != undefined && texture["smoothing"] != smoothing) {
+                    this.drawCmdManager.pushChangeSmoothing(texture, smoothing);
+                }
+                if (meshUVs) {
+                    this.vao.changeToMeshIndices();
+                }
+                var count = meshIndices ? meshIndices.length / 3 : 2;
                 // 应用$filter，因为只可能是colorMatrixFilter，最后两个参数可不传
                 this.drawCmdManager.pushDrawTexture(texture, count, this.$filter, textureWidth, textureHeight);
                 buffer.currentTexture = texture;
@@ -6735,12 +6607,7 @@ var egret;
                 if (this.drawCmdManager.drawDataLen == 0 || this.contextLost) {
                     return;
                 }
-                var indices = this.vao.getIndices();
-                var vertices = this.vao.getVertices();
-                // 非iOS14，正常把整个vertex buffer一次推送
-                if (!web.isIOS14Device) {
-                    this.uploadVerticesArray(vertices);
-                }
+                this.uploadVerticesArray(this.vao.getVertices());
                 // 有mesh，则使用indicesForMesh
                 if (this.vao.isMesh()) {
                     this.uploadIndicesArray(this.vao.getMeshIndices());
@@ -6749,22 +6616,12 @@ var egret;
                 var offset = 0;
                 for (var i = 0; i < length; i++) {
                     var data = this.drawCmdManager.drawData[i];
-                    var isDrawCall = data.type == 0 /* TEXTURE */ || data.type == 1 /* RECT */ || data.type == 2 /* PUSH_MASK */ || data.type == 3 /* POP_MASK */;
-                    // 如果是ios14，而且不是mesh，则走新的流程渲染，每个drawcall单独推所需最小的index buffer和vertex buffer
-                    if (web.isIOS14Device && !this.vao.isMesh() && isDrawCall) {
-                        this.uploadIndicesArray(indices.subarray(0, data.count * this.vertexCountPerTriangle)); // data.count是三角形数目，*3 就是index数量
-                        this.uploadVerticesArray(vertices.subarray(offset / this.vertexCountPerTriangle * this.triangleCountPerQuad * this.dataCountPerVertex, (offset + data.count * this.vertexCountPerTriangle) / this.vertexCountPerTriangle * this.triangleCountPerQuad * this.dataCountPerVertex)); // data.count是三角形数目，对应 *3*2/3的顶点数，每个顶点5个值
-                        this.drawData(data, 0); //每次只推送本次drawcall所需的最小的indexBuffer和vertexBuffer，就没有offset了
-                        offset += data.count * this.vertexCountPerTriangle; // offset只用于保持egret原有逻辑，索引vao.vertices，取subarray
-                    }
-                    else {
-                        offset = this.drawData(data, offset);
-                    }
+                    offset = this.drawData(data, offset);
                     // 计算draw call
                     if (data.type == 7 /* ACT_BUFFER */) {
                         this.activatedBuffer = data.buffer;
                     }
-                    if (isDrawCall) {
+                    if (data.type == 0 /* TEXTURE */ || data.type == 1 /* RECT */ || data.type == 2 /* PUSH_MASK */ || data.type == 3 /* POP_MASK */) {
                         if (this.activatedBuffer && this.activatedBuffer.$computeDrawCall) {
                             this.activatedBuffer.$drawCalls++;
                         }
@@ -6792,27 +6649,27 @@ var egret;
                     case 0 /* TEXTURE */:
                         //这段的切换可以优化
                         if (filter) {
-                            if (filter.type === 'custom') {
+                            if (filter.type === "custom") {
                                 program = web.EgretWebGLProgram.getProgram(gl, filter.$vertexSrc, filter.$fragmentSrc, filter.$shaderKey);
                             }
-                            else if (filter.type === 'colorTransform') {
+                            else if (filter.type === "colorTransform") {
                                 if (data.texture[egret.etc_alpha_mask]) {
                                     gl.activeTexture(gl.TEXTURE1);
                                     gl.bindTexture(gl.TEXTURE_2D, data.texture[egret.etc_alpha_mask]);
-                                    program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.colorTransform_frag_etc_alphamask_frag, 'colorTransform_frag_etc_alphamask_frag');
+                                    program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.colorTransform_frag_etc_alphamask_frag, "colorTransform_frag_etc_alphamask_frag");
                                 }
                                 else {
-                                    program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.colorTransform_frag, 'colorTransform');
+                                    program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.colorTransform_frag, "colorTransform");
                                 }
                             }
-                            else if (filter.type === 'blurX') {
-                                program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.blur_frag, 'blur');
+                            else if (filter.type === "blurX") {
+                                program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.blur_frag, "blur");
                             }
-                            else if (filter.type === 'blurY') {
-                                program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.blur_frag, 'blur');
+                            else if (filter.type === "blurY") {
+                                program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.blur_frag, "blur");
                             }
-                            else if (filter.type === 'glow') {
-                                program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.glow_frag, 'glow');
+                            else if (filter.type === "glow") {
+                                program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.glow_frag, "glow");
                             }
                         }
                         else {
@@ -6823,7 +6680,7 @@ var egret;
                                 gl.bindTexture(gl.TEXTURE_2D, data.texture[egret.etc_alpha_mask]);
                             }
                             else {
-                                program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.texture_frag, 'texture');
+                                program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.texture_frag, "texture");
                             }
                         }
                         this.activeProgram(gl, program);
@@ -6831,19 +6688,19 @@ var egret;
                         offset += this.drawTextureElements(data, offset);
                         break;
                     case 1 /* RECT */:
-                        program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.primitive_frag, 'primitive');
+                        program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.primitive_frag, "primitive");
                         this.activeProgram(gl, program);
                         this.syncUniforms(program, filter, data.textureWidth, data.textureHeight);
                         offset += this.drawRectElements(data, offset);
                         break;
                     case 2 /* PUSH_MASK */:
-                        program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.primitive_frag, 'primitive');
+                        program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.primitive_frag, "primitive");
                         this.activeProgram(gl, program);
                         this.syncUniforms(program, filter, data.textureWidth, data.textureHeight);
                         offset += this.drawPushMaskElements(data, offset);
                         break;
                     case 3 /* POP_MASK */:
-                        program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.primitive_frag, 'primitive');
+                        program = web.EgretWebGLProgram.getProgram(gl, web.EgretShaderLib.default_vert, web.EgretShaderLib.primitive_frag, "primitive");
                         this.activeProgram(gl, program);
                         this.syncUniforms(program, filter, data.textureWidth, data.textureHeight);
                         offset += this.drawPopMaskElements(data, offset);
@@ -6903,17 +6760,17 @@ var egret;
                     // 目前所有attribute buffer的绑定方法都是一致的
                     var attribute = program.attributes;
                     for (var key in attribute) {
-                        if (key === 'aVertexPosition') {
-                            gl.vertexAttribPointer(attribute['aVertexPosition'].location, 2, gl.FLOAT, false, 5 * 4, 0);
-                            gl.enableVertexAttribArray(attribute['aVertexPosition'].location);
+                        if (key === "aVertexPosition") {
+                            gl.vertexAttribPointer(attribute["aVertexPosition"].location, 2, gl.FLOAT, false, 5 * 4, 0);
+                            gl.enableVertexAttribArray(attribute["aVertexPosition"].location);
                         }
-                        else if (key === 'aTextureCoord') {
-                            gl.vertexAttribPointer(attribute['aTextureCoord'].location, 2, gl.FLOAT, false, 5 * 4, 2 * 4);
-                            gl.enableVertexAttribArray(attribute['aTextureCoord'].location);
+                        else if (key === "aTextureCoord") {
+                            gl.vertexAttribPointer(attribute["aTextureCoord"].location, 2, gl.FLOAT, false, 5 * 4, 2 * 4);
+                            gl.enableVertexAttribArray(attribute["aTextureCoord"].location);
                         }
-                        else if (key === 'aColor') {
-                            gl.vertexAttribPointer(attribute['aColor'].location, 4, gl.UNSIGNED_BYTE, true, 5 * 4, 4 * 4);
-                            gl.enableVertexAttribArray(attribute['aColor'].location);
+                        else if (key === "aColor") {
+                            gl.vertexAttribPointer(attribute["aColor"].location, 4, gl.UNSIGNED_BYTE, true, 5 * 4, 4 * 4);
+                            gl.enableVertexAttribArray(attribute["aColor"].location);
                         }
                     }
                     this.currentProgram = program;
@@ -6921,18 +6778,18 @@ var egret;
             };
             WebGLRenderContext.prototype.syncUniforms = function (program, filter, textureWidth, textureHeight) {
                 var uniforms = program.uniforms;
-                var isCustomFilter = filter && filter.type === 'custom';
+                var isCustomFilter = filter && filter.type === "custom";
                 for (var key in uniforms) {
-                    if (key === 'projectionVector') {
+                    if (key === "projectionVector") {
                         uniforms[key].setValue({ x: this.projectionX, y: this.projectionY });
                     }
-                    else if (key === 'uTextureSize') {
+                    else if (key === "uTextureSize") {
                         uniforms[key].setValue({ x: textureWidth, y: textureHeight });
                     }
-                    else if (key === 'uSampler') {
+                    else if (key === "uSampler") {
                         uniforms[key].setValue(0);
                     }
-                    else if (key === 'uSamplerAlphaMask') {
+                    else if (key === "uSamplerAlphaMask") {
                         uniforms[key].setValue(1);
                     }
                     else {
@@ -7078,7 +6935,7 @@ var egret;
                 this.pushBuffer(output);
                 var originInput = input, temp, width = input.rootRenderTarget.width, height = input.rootRenderTarget.height;
                 // 模糊滤镜分别处理blurX与blurY
-                if (filter.type == 'blur') {
+                if (filter.type == "blur") {
                     var blurXFilter = filter.blurXFilter;
                     var blurYFilter = filter.blurYFilter;
                     if (blurXFilter.blurX != 0 && blurYFilter.blurY != 0) {
@@ -7128,11 +6985,11 @@ var egret;
                 gl.SRC_ALPHA_SATURATE = 776
                 */
                 WebGLRenderContext.blendModesForGL = {};
-                WebGLRenderContext.blendModesForGL['source-over'] = [1, 771];
-                WebGLRenderContext.blendModesForGL['lighter'] = [1, 1];
-                WebGLRenderContext.blendModesForGL['lighter-in'] = [770, 771];
-                WebGLRenderContext.blendModesForGL['destination-out'] = [0, 771];
-                WebGLRenderContext.blendModesForGL['destination-in'] = [0, 770];
+                WebGLRenderContext.blendModesForGL["source-over"] = [1, 771];
+                WebGLRenderContext.blendModesForGL["lighter"] = [1, 1];
+                WebGLRenderContext.blendModesForGL["lighter-in"] = [770, 771];
+                WebGLRenderContext.blendModesForGL["destination-out"] = [0, 771];
+                WebGLRenderContext.blendModesForGL["destination-in"] = [0, 770];
             };
             WebGLRenderContext.glContextId = 0;
             WebGLRenderContext.blendModesForGL = null;

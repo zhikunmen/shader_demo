@@ -3051,15 +3051,6 @@ declare namespace egret {
         $hitTest(stageX: number, stageY: number): DisplayObject;
         private _sortChildrenFunc(a, b);
         sortChildren(): void;
-        private hashMap;
-        /**
-         * 减少drawcall为目的，获取bitmap index
-         */
-        private getHashIndex(child, index);
-        /**
-         * 删除bitmap index
-         */
-        private removeHash(child);
     }
 }
 declare namespace egret {
@@ -9315,8 +9306,6 @@ declare namespace egret.sys {
          * 暂停播放器，后续可以通过调用start()重新启动播放器。
          */
         pause(): void;
-        /**性能上报工具 */
-        private benchmark;
         /**
          * @private
          * 渲染屏幕
@@ -9368,59 +9357,6 @@ declare module egret {
      * @private
      */
     var nativeRender: boolean;
-}
-/**
- * @private
- */
-interface PlayerOption {
-    /**
-     * 入口类完整类名
-     */
-    entryClassName?: string;
-    /**
-     * 默认帧率
-     */
-    frameRate?: number;
-    /**
-     * 屏幕适配模式
-     */
-    scaleMode?: string;
-    /**
-     * 初始内容宽度
-     */
-    contentWidth?: number;
-    /**
-     * 初始内容高度
-     */
-    contentHeight?: number;
-    /**
-     * 屏幕方向
-     */
-    orientation?: string;
-    /**
-     * 显示FPS
-     */
-    showFPS?: boolean;
-    /**
-     *
-     */
-    fpsStyles?: Object;
-    /**
-     * 显示日志
-     */
-    showLog?: boolean;
-    /**
-     * 过滤日志的正则表达式
-     */
-    logFilter?: string;
-    /**
-     *
-     */
-    maxTouches?: number;
-    /**
-     *
-     */
-    textureScaleFactor?: number;
 }
 declare namespace egret {
     /** !!!!!!!!inspired by Babylon.js!!!!!!!!!!!!!
@@ -9508,6 +9444,93 @@ declare namespace egret {
         uploadLevels(bitmapData: egret.BitmapData, loadMipmaps: boolean): void;
         private _upload2DCompressedLevels(bitmapData, loadMipmaps);
     }
+}
+declare namespace egret.sys {
+    /**
+     * @private
+     * 共享的用于碰撞检测的渲染缓冲
+     */
+    let customHitTestBuffer: sys.RenderBuffer;
+    /**
+     * @private
+     * 共享的用于canvas碰撞检测的渲染缓冲
+     */
+    let canvasHitTestBuffer: sys.RenderBuffer;
+    /**
+     * @private
+     * 渲染缓冲
+     */
+    interface RenderBuffer {
+        /**
+         * 呈现最终绘图结果的画布。
+         * @readOnly
+         */
+        surface: any;
+        /**
+         * 渲染上下文。
+         * @readOnly
+         */
+        context: any;
+        /**
+         * 渲染缓冲的宽度，以像素为单位。
+         * @readOnly
+         */
+        width: number;
+        /**
+         * 渲染缓冲的高度，以像素为单位。
+         * @readOnly
+         */
+        height: number;
+        /**
+         * 改变渲染缓冲的大小并清空缓冲区
+         * @param width 改变后的宽
+         * @param height 改变后的高
+         * @param useMaxSize 若传入true，则将改变后的尺寸与已有尺寸对比，保留较大的尺寸。
+         */
+        resize(width: number, height: number, useMaxSize?: boolean): void;
+        /**
+         * 获取指定区域的像素
+         */
+        getPixels(x: number, y: number, width?: number, height?: number): number[];
+        /**
+         * 转换成base64字符串，如果图片（或者包含的图片）跨域，则返回null
+         * @param type 转换的类型，如: "image/png","image/jpeg"
+         */
+        toDataURL(type?: string, ...args: any[]): string;
+        /**
+         * 清空缓冲区数据
+         */
+        clear(): void;
+        /**
+         * 销毁渲染缓冲
+         */
+        destroy(): void;
+    }
+    /**
+     * @private
+     */
+    let RenderBuffer: {
+        /**
+         * 创建一个RenderTarget。
+         * 注意：若内存不足或创建缓冲区失败，将会抛出错误异常。
+         * @param width 渲染缓冲的初始宽
+         * @param height 渲染缓冲的初始高
+         * @param root 是否为舞台buffer
+         */
+        new (width?: number, height?: number, root?: boolean): RenderBuffer;
+    };
+    /**
+     * @private
+     */
+    let CanvasRenderBuffer: {
+        /**
+         * 创建一个CanvasRenderBuffer。
+         * 注意：若内存不足或创建缓冲区失败，将会抛出错误异常。
+         * @param width 渲染缓冲的初始宽
+         * @param height 渲染缓冲的初始高
+         */
+        new (width?: number, height?: number): RenderBuffer;
+    };
 }
 declare namespace egret.sys {
     /**
@@ -10567,7 +10590,6 @@ declare namespace egret {
         private renderNormalBitmap(node, context);
         private renderBitmap(node, context);
         private renderMesh(node, context);
-        private drawMesh(image, sourceX, sourceY, sourceWidth, sourceHeight, offsetX, offsetY, destWidth, destHeight, meshUVs, meshVertices, meshIndices, bounds, rotated, context);
         renderText(node: sys.TextNode, context: CanvasRenderingContext2D): void;
         private renderingMask;
         /**
@@ -10577,7 +10599,6 @@ declare namespace egret {
         private renderPath(path, context);
         private renderGroup(groupNode, context);
         private createRenderBuffer(width, height, useForFilters?);
-        renderClear(): void;
     }
     /**
      * @private
@@ -10887,1006 +10908,6 @@ declare namespace egret {
          * @language zh_CN
          */
         z: number;
-    }
-}
-declare namespace egret {
-    interface DisplayObject {
-        /**
-         * 设置位置
-         * @param x 传null不改变
-         * @param y 传null或不传,不改变
-         */
-        pos(x: number, y?: number): DisplayObject;
-        /**
-         * 设置宽高
-         * @param w 宽度 传null不改变
-         * @param h 高度 传null或不传,不改变
-         */
-        setWH(w: number, h?: number): DisplayObject;
-        /**
-         * 设置缩放
-         * @param scaleX  传null不改变
-         * @param scaleY 传null或不传,不改变
-         */
-        scale(scaleX: number, scaleY?: number): DisplayObject;
-        /**
-         * 设置锚点相对位置，按照比率传入。 若想设置在正中位置 设置0.5 0.5
-         * 非eui组件更改尺寸后无效，原因原生gui没有实时动态width
-         * @param percentX 水平方向锚点位置比率 传null不改变
-         * @param percentY 垂直方向锚点位置比率 传null或不传,不改变
-         */
-        anchorPercent(percentX: number, percentY?: number): DisplayObject;
-        /**
-         * 设置锚点横向比率
-         */
-        anchorPercentX: number;
-        /**
-         * 设置锚点纵向比率
-         */
-        anchorPercentY: number;
-        $anchorPercentX: number;
-        $anchorPercentY: number;
-        /**
-         * 设置锚点绝对位置
-         * @param offsetX 传null不改变
-         * @param offsetY 传null或不传,不改变
-         */
-        anchorOffset(offsetX: number, offsetY?: number): DisplayObject;
-        /**
-         * 设置斜切
-         * @param skewX 传null不改变
-         * @param skewY 传null或不传,不改变
-         */
-        skew(skewX: number, skewY?: number): DisplayObject;
-        /**
-         * 移除自身
-         */
-        removeSelf(): DisplayObject;
-    }
-}
-declare namespace egret.sys {
-    /**
-     * @private
-     */
-    const enum TextKeys {
-        /**
-         * @private
-         */
-        fontSize = 0,
-        /**
-         * @private
-         */
-        lineSpacing = 1,
-        /**
-         * @private
-         */
-        textColor = 2,
-        /**
-         * @private
-         */
-        textFieldWidth = 3,
-        /**
-         * @private
-         */
-        textFieldHeight = 4,
-        /**
-         * @private
-         */
-        textWidth = 5,
-        /**
-         * @private
-         */
-        textHeight = 6,
-        /**
-         * @private
-         */
-        textDrawWidth = 7,
-        /**
-         * @private
-         */
-        fontFamily = 8,
-        /**
-         * @private
-         */
-        textAlign = 9,
-        /**
-         * @private
-         */
-        verticalAlign = 10,
-        /**
-         * @private
-         */
-        textColorString = 11,
-        /**
-         * @private
-         */
-        fontString = 12,
-        /**
-         * @private
-         */
-        text = 13,
-        /**
-         * @private
-         */
-        measuredWidths = 14,
-        /**
-         * @private
-         */
-        bold = 15,
-        /**
-         * @private
-         */
-        italic = 16,
-        /**
-         * @private
-         */
-        fontStringChanged = 17,
-        /**
-         * @private
-         */
-        textLinesChanged = 18,
-        /**
-         * @private
-         */
-        wordWrap = 19,
-        /**
-         * @private
-         */
-        displayAsPassword = 20,
-        /**
-         * @private
-         */
-        maxChars = 21,
-        /**
-         * @private
-         */
-        selectionActivePosition = 22,
-        /**
-         * @private
-         */
-        selectionAnchorPosition = 23,
-        /**
-         * @private
-         */
-        type = 24,
-        /**
-         * @private
-         */
-        strokeColor = 25,
-        /**
-         * @private
-         */
-        strokeColorString = 26,
-        /**
-         * @private
-         */
-        stroke = 27,
-        /**
-         * @private
-         */
-        scrollV = 28,
-        /**
-         * @private
-         */
-        numLines = 29,
-        /**
-         * @private
-         */
-        multiline = 30,
-        /**
-         * @private
-         */
-        border = 31,
-        /**
-         * @private
-         */
-        borderColor = 32,
-        /**
-         * @private
-         */
-        background = 33,
-        /**
-         * @private
-         */
-        backgroundColor = 34,
-        /**
-         * @private
-         */
-        restrictAnd = 35,
-        /**
-         * @private
-         */
-        restrictNot = 36,
-        /**
-         * @private
-         */
-        inputType = 37,
-        /**
-         * @private
-         */
-        textLinesChangedForNativeRender = 38,
-    }
-}
-declare namespace egret {
-    /**
-     * TextField is the text rendering class of egret. It conducts rendering by using the browser / device API. Due to different ways of font rendering in different browsers / devices, there may be differences in the rendering
-     * If developers expect  no differences among all platforms, please use BitmapText
-     * @see http://edn.egret.com/cn/docs/page/141 Create Text
-     *
-     * @event egret.Event.CHANGE Dispatched when entering text user input。
-     * @event egret.FocusEvent.FOCUS_IN Dispatched after the focus to enter text.
-     * @event egret.FocusEvent.FOCUS_OUT Enter the text loses focus after dispatch.
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @includeExample egret/text/TextField.ts
-     * @language en_US
-     */
-    /**
-     * TextField是egret的文本渲染类，采用浏览器/设备的API进行渲染，在不同的浏览器/设备中由于字体渲染方式不一，可能会有渲染差异
-     * 如果开发者希望所有平台完全无差异，请使用BitmapText
-     * @see http://edn.egret.com/cn/docs/page/141 创建文本
-     *
-     * @event egret.Event.CHANGE 输入文本有用户输入时调度。
-     * @event egret.FocusEvent.FOCUS_IN 聚焦输入文本后调度。
-     * @event egret.FocusEvent.FOCUS_OUT 输入文本失去焦点后调度。
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @includeExample egret/text/TextField.ts
-     * @language zh_CN
-     */
-    class TextField extends DisplayObject {
-        /**
-         * default fontFamily
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 默认文本字体
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        static default_fontFamily: string;
-        /**
-         * default size in pixels of text
-         * @version Egret 3.2.1
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 默认文本字号大小
-         * @version Egret 3.2.1
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        static default_size: number;
-        /**
-         * default color of the text.
-         * @version Egret 3.2.1
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 默认文本颜色
-         * @version Egret 3.2.1
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        static default_textColor: number;
-        /**
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        constructor();
-        protected createNativeDisplayObject(): void;
-        /**
-         * @private
-         */
-        $TextField: Object;
-        /**
-         * @private
-         */
-        private isInput();
-        $inputEnabled: boolean;
-        $setTouchEnabled(value: boolean): void;
-        /**
-         * The name of the font to use, or a comma-separated list of font names.
-         * @default "Arial"
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 要使用的字体的名称或用逗号分隔的字体名称列表。
-         * @default "Arial"
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        fontFamily: string;
-        $setFontFamily(value: string): boolean;
-        /**
-         * The size in pixels of text
-         * @default 30
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 文本的字号大小。
-         * @default 30
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        size: number;
-        $setSize(value: number): boolean;
-        /**
-         * Specifies whether the text is boldface.
-         * @default false
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 是否显示为粗体。
-         * @default false
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        bold: boolean;
-        $setBold(value: boolean): boolean;
-        /**
-         * Determines whether the text is italic font.
-         * @default false
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 是否显示为斜体。
-         * @default false
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        italic: boolean;
-        $setItalic(value: boolean): boolean;
-        /**
-         * @private
-         *
-         */
-        private invalidateFontString();
-        /**
-         * Horizontal alignment of text.
-         * @default：egret.HorizontalAlign.LEFT
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 文本的水平对齐方式。
-         * @default：egret.HorizontalAlign.LEFT
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        textAlign: string;
-        $setTextAlign(value: string): boolean;
-        /**
-         * Vertical alignment of text.
-         * @default：egret.VerticalAlign.TOP
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 文字的垂直对齐方式。
-         * @default：egret.VerticalAlign.TOP
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        verticalAlign: string;
-        $setVerticalAlign(value: string): boolean;
-        /**
-         * An integer representing the amount of vertical space between lines.
-         * @default 0
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 一个整数，表示行与行之间的垂直间距量
-         * @default 0
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        lineSpacing: number;
-        $setLineSpacing(value: number): boolean;
-        /**
-         * Color of the text.
-         * @default 0x000000
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 文本颜色
-         * @default 0x000000
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        textColor: number;
-        $setTextColor(value: number): boolean;
-        /**
-         * A Boolean value that indicates whether the text field word wrap. If the value is true, then the text field by word wrap;
-         * if the value is false, the text field by newline characters.
-         * @default false
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 一个布尔值，表示文本字段是否按单词换行。如果值为 true，则该文本字段按单词换行；
-         * 如果值为 false，则该文本字段按字符换行。
-         * @default false
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        wordWrap: boolean;
-        $setWordWrap(value: boolean): void;
-        protected inputUtils: InputController;
-        /**
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * Type of the text field.
-         * Any one of the following TextFieldType constants: TextFieldType.DYNAMIC (specifies the dynamic text field that users can not edit), or TextFieldType.INPUT (specifies the dynamic text field that users can edit).
-         * @default egret.TextFieldType.DYNAMIC
-         * @language en_US
-         */
-        /**
-         * 文本字段的类型。
-         * 以下 TextFieldType 常量中的任一个：TextFieldType.DYNAMIC（指定用户无法编辑的动态文本字段），或 TextFieldType.INPUT（指定用户可以编辑的输入文本字段）。
-         * @default egret.TextFieldType.DYNAMIC
-         * @language zh_CN
-         */
-        type: string;
-        /**
-         * @private
-         *
-         * @param value
-         */
-        $setType(value: string): boolean;
-        /**
-         * @version Egret 3.1.2
-         * @platform Web,Native
-         */
-        /**
-         * Pop-up keyboard type.
-         * Any of a TextFieldInputType constants.
-         * @language en_US
-         */
-        /**
-         * 弹出键盘的类型。
-         * TextFieldInputType 常量中的任一个。
-         * @language zh_CN
-         */
-        inputType: string;
-        /**
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * Serve as a string of the current text field in the text
-         * @language en_US
-         */
-        /**
-         * 作为文本字段中当前文本的字符串
-         * @language zh_CN
-         */
-        text: string;
-        /**
-         * @private
-         *
-         * @returns
-         */
-        $getText(): string;
-        /**
-         * @private
-         *
-         * @param value
-         */
-        $setBaseText(value: string): boolean;
-        /**
-         * @private
-         *
-         * @param value
-         */
-        $setText(value: string): boolean;
-        /**
-         * Specify whether the text field is a password text field.
-         * If the value of this property is true, the text field is treated as a password text field and hides the input characters using asterisks instead of the actual characters. If false, the text field is not treated as a password text field.
-         * @default false
-         * @language en_US
-         */
-        /**
-         * 指定文本字段是否是密码文本字段。
-         * 如果此属性的值为 true，则文本字段被视为密码文本字段，并使用星号而不是实际字符来隐藏输入的字符。如果为 false，则不会将文本字段视为密码文本字段。
-         * @default false
-         * @language zh_CN
-         */
-        displayAsPassword: boolean;
-        /**
-         * @private
-         *
-         * @param value
-         */
-        $setDisplayAsPassword(value: boolean): boolean;
-        /**
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * Represent the stroke color of the text.
-         * Contain three 8-bit numbers with RGB color components; for example, 0xFF0000 is red, 0x00FF00 is green.
-         * @default 0x000000
-         * @language en_US
-         */
-        /**
-         * 表示文本的描边颜色。
-         * 包含三个 8 位 RGB 颜色成分的数字；例如，0xFF0000 为红色，0x00FF00 为绿色。
-         * @default 0x000000
-         * @language zh_CN
-         */
-        strokeColor: number;
-        /**
-         * @private
-         *
-         * @param value
-         */
-        $setStrokeColor(value: number): boolean;
-        /**
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * Indicate the stroke width.
-         * 0 means no stroke.
-         * @default 0
-         * @language en_US
-         */
-        /**
-         * 表示描边宽度。
-         * 0为没有描边。
-         * @default 0
-         * @language zh_CN
-         */
-        stroke: number;
-        /**
-         * @private
-         *
-         * @param value
-         */
-        $setStroke(value: number): boolean;
-        /**
-         * The maximum number of characters that the text field can contain, as entered by a user. \n A script can insert more text than maxChars allows; the maxChars property indicates only how much text a user can enter. If the value of this property is 0, a user can enter an unlimited amount of text.
-         * The default value is 0.
-         * @default 0
-         * @language en_US
-         */
-        /**
-         * 文本字段中最多可包含的字符数（即用户输入的字符数）。
-         * 脚本可以插入比 maxChars 允许的字符数更多的文本；maxChars 属性仅表示用户可以输入多少文本。如果此属性的值为 0，则用户可以输入无限数量的文本。
-         * @default 0
-         * @language zh_CN
-         */
-        maxChars: number;
-        /**
-         * @private
-         *
-         * @param value
-         */
-        $setMaxChars(value: number): boolean;
-        /**
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * Vertical position of text in a text field. scrollV property helps users locate specific passages in a long article, and create scrolling text fields.
-         * Vertically scrolling units are lines, and horizontal scrolling unit is pixels.
-         * If the first displayed line is the first line in the text field, scrollV is set to 1 (instead of 0).
-         * @language en_US
-         */
-        /**
-         * 文本在文本字段中的垂直位置。scrollV 属性可帮助用户定位到长篇文章的特定段落，还可用于创建滚动文本字段。
-         * 垂直滚动的单位是行，而水平滚动的单位是像素。
-         * 如果显示的第一行是文本字段中的第一行，则 scrollV 设置为 1（而非 0）。
-         * @language zh_CN
-         */
-        scrollV: number;
-        /**
-         * The maximum value of scrollV
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * scrollV 的最大值
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        readonly maxScrollV: number;
-        /**
-         * @private
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        readonly selectionBeginIndex: number;
-        /**
-         * @private
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        readonly selectionEndIndex: number;
-        /**
-         * @private
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        readonly caretIndex: number;
-        /**
-         * @private
-         *
-         * @param beginIndex
-         * @param endIndex
-         */
-        $setSelection(beginIndex: number, endIndex: number): boolean;
-        /**
-         * @private
-         *
-         * @returns
-         */
-        $getLineHeight(): number;
-        /**
-         * Number of lines of text.
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 文本行数。
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        readonly numLines: number;
-        /**
-         * Indicate whether field is a multiline text field. Note that this property is valid only when the type is TextFieldType.INPUT.
-         * If the value is true, the text field is multiline; if the value is false, the text field is a single-line text field. In a field of type TextFieldType.INPUT, the multiline value determines whether the Enter key creates a new line (a value of false, and the Enter key is ignored).
-         * @default false
-         * @language en_US
-         */
-        /**
-         * 表示字段是否为多行文本字段。注意，此属性仅在type为TextFieldType.INPUT时才有效。
-         * 如果值为 true，则文本字段为多行文本字段；如果值为 false，则文本字段为单行文本字段。在类型为 TextFieldType.INPUT 的字段中，multiline 值将确定 Enter 键是否创建新行（如果值为 false，则将忽略 Enter 键）。
-         * @default false
-         * @language zh_CN
-         */
-        multiline: boolean;
-        /**
-         * @private
-         *
-         * @param value
-         */
-        $setMultiline(value: boolean): boolean;
-        /**
-         * Indicates a user can enter into the text field character set. If you restrict property is null, you can enter any character. If you restrict property is an empty string, you can not enter any character. If you restrict property is a string of characters, you can enter only characters in the string in the text field. The string is scanned from left to right. You can use a hyphen (-) to specify a range. Only restricts user interaction; a script may put any text into the text field. <br/>
-                  * If the string of characters caret (^) at the beginning, all characters are initially accepted, then the string are excluded from receiving ^ character. If the string does not begin with a caret (^) to, any characters are initially accepted and then a string of characters included in the set of accepted characters. <br/>
-                  * The following example allows only uppercase characters, spaces, and numbers in the text field: <br/>
-                  * My_txt.restrict = "A-Z 0-9"; <br/>
-                  * The following example includes all characters except lowercase letters: <br/>
-                  * My_txt.restrict = "^ a-z"; <br/>
-                  * If you need to enter characters \ ^, use two backslash "\\ -" "\\ ^": <br/>
-                  * Can be used anywhere in the string ^ to rule out including characters and switch between characters, but can only be used to exclude a ^. The following code includes only uppercase letters except uppercase Q: <br/>
-                  * My_txt.restrict = "A-Z ^ Q"; <br/>
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @default null
-         * @language en_US
-         */
-        /**
-         * 表示用户可输入到文本字段中的字符集。如果 restrict 属性的值为 null，则可以输入任何字符。如果 restrict 属性的值为空字符串，则不能输入任何字符。如果 restrict 属性的值为一串字符，则只能在文本字段中输入该字符串中的字符。从左向右扫描该字符串。可以使用连字符 (-) 指定一个范围。只限制用户交互；脚本可将任何文本放入文本字段中。<br/>
-         * 如果字符串以尖号 (^) 开头，则先接受所有字符，然后从接受字符集中排除字符串中 ^ 之后的字符。如果字符串不以尖号 (^) 开头，则最初不接受任何字符，然后将字符串中的字符包括在接受字符集中。<br/>
-         * 下例仅允许在文本字段中输入大写字符、空格和数字：<br/>
-         * my_txt.restrict = "A-Z 0-9";<br/>
-         * 下例包含除小写字母之外的所有字符：<br/>
-         * my_txt.restrict = "^a-z";<br/>
-         * 如果需要输入字符 \ ^，请使用2个反斜杠 "\\-" "\\^" ：<br/>
-         * 可在字符串中的任何位置使用 ^，以在包含字符与排除字符之间进行切换，但是最多只能有一个 ^ 用来排除。下面的代码只包含除大写字母 Q 之外的大写字母：<br/>
-         * my_txt.restrict = "A-Z^Q";<br/>
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @default null
-         * @language zh_CN
-         */
-        restrict: string;
-        /**
-         * @private
-         *
-         * @param value
-         */
-        $setWidth(value: number): boolean;
-        /**
-         * @private
-         *
-         * @param value
-         */
-        $setHeight(value: number): boolean;
-        /**
-         * @private
-         * 获取显示宽度
-         */
-        $getWidth(): number;
-        /**
-         * @private
-         * 获取显示宽度
-         */
-        $getHeight(): number;
-        /**
-         * @private
-         */
-        private textNode;
-        /**
-         * @private
-         */
-        $graphicsNode: sys.GraphicsNode;
-        /**
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * Specifies whether the text field has a border.
-         * If true, the text field has a border. If false, the text field has no border.
-         * Use borderColor property to set the border color.
-         * @default false
-         * @language en_US
-         */
-        /**
-         * 指定文本字段是否具有边框。
-         * 如果为 true，则文本字段具有边框。如果为 false，则文本字段没有边框。
-         * 使用 borderColor 属性来设置边框颜色。
-         * @default false
-         * @language zh_CN
-         */
-        border: boolean;
-        /**
-         * @private
-         */
-        $setBorder(value: boolean): void;
-        /**
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * The color of the text field border.
-         * Even currently is no border can be retrieved or set this property, but only if the text field has the border property is set to true, the color is visible.
-         * @default 0x000000
-         * @language en_US
-         */
-        /**
-         * 文本字段边框的颜色。
-         * 即使当前没有边框，也可检索或设置此属性，但只有当文本字段已将 border 属性设置为 true 时，才可以看到颜色。
-         * @default 0x000000
-         * @language zh_CN
-         */
-        borderColor: number;
-        /**
-         * @private
-         */
-        $setBorderColor(value: number): void;
-        /**
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * Specifies whether the text field has a background fill.
-         * If true, the text field has a background fill. If false, the text field has no background fill.
-         * Use the backgroundColor property to set the background color of the text field.
-         * @default false
-         * @language en_US
-         */
-        /**
-         * 指定文本字段是否具有背景填充。
-         * 如果为 true，则文本字段具有背景填充。如果为 false，则文本字段没有背景填充。
-         * 使用 backgroundColor 属性来设置文本字段的背景颜色。
-         * @default false
-         * @language zh_CN
-         */
-        background: boolean;
-        /**
-         * @private
-         */
-        $setBackground(value: boolean): void;
-        /**
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * Color of the text field background.
-         * Even currently is no background, can be retrieved or set this property, but only if the text field has the background property set to true, the color is visible.
-         * @default 0xFFFFFF
-         * @language en_US
-         */
-        /**
-         * 文本字段背景的颜色。
-         * 即使当前没有背景，也可检索或设置此属性，但只有当文本字段已将 background 属性设置为 true 时，才可以看到颜色。
-         * @default 0xFFFFFF
-         * @language zh_CN
-         */
-        backgroundColor: number;
-        /**
-         * @private
-         */
-        $setBackgroundColor(value: number): void;
-        /**
-         * @private
-         *
-         */
-        private fillBackground(lines?);
-        /**
-         * Enter the text automatically entered into the input state, the input type is text only and may only be invoked in the user interaction.
-         * @version Egret 3.0.8
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 输入文本自动进入到输入状态，仅在类型是输入文本并且是在用户交互下才可以调用。
-         * @version Egret 3.0.8
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        setFocus(): void;
-        /**
-         * @private
-         *
-         */
-        $onRemoveFromStage(): void;
-        /**
-         * @private
-         *
-         * @param stage
-         * @param nestLevel
-         */
-        $onAddToStage(stage: Stage, nestLevel: number): void;
-        $invalidateTextField(): void;
-        $getRenderBounds(): Rectangle;
-        /**
-         * @private
-         */
-        $measureContentBounds(bounds: Rectangle): void;
-        $updateRenderNode(): void;
-        /**
-         * @private
-         */
-        private isFlow;
-        /**
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * Set rich text
-         * @language en_US
-         */
-        /**
-         * 设置富文本
-         * @see http://edn.egret.com/cn/index.php/article/index/id/146
-         * @language zh_CN
-         */
-        textFlow: Array<egret.ITextElement>;
-        /**
-         * @private
-         *
-         * @param text
-         * @returns
-         */
-        private changeToPassText(text);
-        /**
-         * @private
-         */
-        private textArr;
-        /**
-         * @private
-         *
-         * @param textArr
-         */
-        private setMiddleStyle(textArr);
-        /**
-         * Get the text measured width
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 获取文本测量宽度
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        readonly textWidth: number;
-        /**
-         * Get Text measuring height
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language en_US
-         */
-        /**
-         * 获取文本测量高度
-         * @version Egret 2.4
-         * @platform Web,Native
-         * @language zh_CN
-         */
-        readonly textHeight: number;
-        /**
-         * @private
-         * @param text
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        appendText(text: string): void;
-        /**
-         * @private
-         * @param element
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        appendElement(element: egret.ITextElement): void;
-        /**
-         * @private
-         */
-        private linesArr;
-        $getLinesArr(): Array<egret.ILineElement>;
-        /**
-         * @private
-         *
-         * @returns
-         */
-        $getLinesArr2(): Array<egret.ILineElement>;
-        /**
-         * @private
-         */
-        $isTyping: boolean;
-        /**
-         * @private
-         */
-        $setIsTyping(value: boolean): void;
-        /**
-         * @private
-         * 返回要绘制的下划线列表
-         */
-        private drawText();
-        private addEvent();
-        private removeEvent();
-        private onTapHandler(e);
-    }
-    interface TextField {
-        addEventListener<Z>(type: "link", listener: (this: Z, e: TextEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
-        addEventListener<Z>(type: "focusIn" | "focusOut", listener: (this: Z, e: FocusEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
-        addEventListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number): any;
-    }
-}
-declare namespace egret {
-    interface TextField {
-        /** 是否放大字体高度；解决泰文被截断一部分的问题，默认不开启，使用时可全局开启一次即可 */
-        isZoomTextHeight: boolean;
     }
 }
 declare namespace egret {
@@ -13343,6 +12364,945 @@ declare namespace egret {
     let StageText: {
         new (): StageText;
     };
+}
+declare namespace egret.sys {
+    /**
+     * @private
+     */
+    const enum TextKeys {
+        /**
+         * @private
+         */
+        fontSize = 0,
+        /**
+         * @private
+         */
+        lineSpacing = 1,
+        /**
+         * @private
+         */
+        textColor = 2,
+        /**
+         * @private
+         */
+        textFieldWidth = 3,
+        /**
+         * @private
+         */
+        textFieldHeight = 4,
+        /**
+         * @private
+         */
+        textWidth = 5,
+        /**
+         * @private
+         */
+        textHeight = 6,
+        /**
+         * @private
+         */
+        textDrawWidth = 7,
+        /**
+         * @private
+         */
+        fontFamily = 8,
+        /**
+         * @private
+         */
+        textAlign = 9,
+        /**
+         * @private
+         */
+        verticalAlign = 10,
+        /**
+         * @private
+         */
+        textColorString = 11,
+        /**
+         * @private
+         */
+        fontString = 12,
+        /**
+         * @private
+         */
+        text = 13,
+        /**
+         * @private
+         */
+        measuredWidths = 14,
+        /**
+         * @private
+         */
+        bold = 15,
+        /**
+         * @private
+         */
+        italic = 16,
+        /**
+         * @private
+         */
+        fontStringChanged = 17,
+        /**
+         * @private
+         */
+        textLinesChanged = 18,
+        /**
+         * @private
+         */
+        wordWrap = 19,
+        /**
+         * @private
+         */
+        displayAsPassword = 20,
+        /**
+         * @private
+         */
+        maxChars = 21,
+        /**
+         * @private
+         */
+        selectionActivePosition = 22,
+        /**
+         * @private
+         */
+        selectionAnchorPosition = 23,
+        /**
+         * @private
+         */
+        type = 24,
+        /**
+         * @private
+         */
+        strokeColor = 25,
+        /**
+         * @private
+         */
+        strokeColorString = 26,
+        /**
+         * @private
+         */
+        stroke = 27,
+        /**
+         * @private
+         */
+        scrollV = 28,
+        /**
+         * @private
+         */
+        numLines = 29,
+        /**
+         * @private
+         */
+        multiline = 30,
+        /**
+         * @private
+         */
+        border = 31,
+        /**
+         * @private
+         */
+        borderColor = 32,
+        /**
+         * @private
+         */
+        background = 33,
+        /**
+         * @private
+         */
+        backgroundColor = 34,
+        /**
+         * @private
+         */
+        restrictAnd = 35,
+        /**
+         * @private
+         */
+        restrictNot = 36,
+        /**
+         * @private
+         */
+        inputType = 37,
+        /**
+         * @private
+         */
+        textLinesChangedForNativeRender = 38,
+    }
+}
+declare namespace egret {
+    /**
+     * TextField is the text rendering class of egret. It conducts rendering by using the browser / device API. Due to different ways of font rendering in different browsers / devices, there may be differences in the rendering
+     * If developers expect  no differences among all platforms, please use BitmapText
+     * @see http://edn.egret.com/cn/docs/page/141 Create Text
+     *
+     * @event egret.Event.CHANGE Dispatched when entering text user input。
+     * @event egret.FocusEvent.FOCUS_IN Dispatched after the focus to enter text.
+     * @event egret.FocusEvent.FOCUS_OUT Enter the text loses focus after dispatch.
+     * @version Egret 2.4
+     * @platform Web,Native
+     * @includeExample egret/text/TextField.ts
+     * @language en_US
+     */
+    /**
+     * TextField是egret的文本渲染类，采用浏览器/设备的API进行渲染，在不同的浏览器/设备中由于字体渲染方式不一，可能会有渲染差异
+     * 如果开发者希望所有平台完全无差异，请使用BitmapText
+     * @see http://edn.egret.com/cn/docs/page/141 创建文本
+     *
+     * @event egret.Event.CHANGE 输入文本有用户输入时调度。
+     * @event egret.FocusEvent.FOCUS_IN 聚焦输入文本后调度。
+     * @event egret.FocusEvent.FOCUS_OUT 输入文本失去焦点后调度。
+     * @version Egret 2.4
+     * @platform Web,Native
+     * @includeExample egret/text/TextField.ts
+     * @language zh_CN
+     */
+    class TextField extends DisplayObject {
+        /**
+         * default fontFamily
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 默认文本字体
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        static default_fontFamily: string;
+        /**
+         * default size in pixels of text
+         * @version Egret 3.2.1
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 默认文本字号大小
+         * @version Egret 3.2.1
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        static default_size: number;
+        /**
+         * default color of the text.
+         * @version Egret 3.2.1
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 默认文本颜色
+         * @version Egret 3.2.1
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        static default_textColor: number;
+        /**
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        constructor();
+        protected createNativeDisplayObject(): void;
+        /**
+         * @private
+         */
+        $TextField: Object;
+        /**
+         * @private
+         */
+        private isInput();
+        $inputEnabled: boolean;
+        $setTouchEnabled(value: boolean): void;
+        /**
+         * The name of the font to use, or a comma-separated list of font names.
+         * @default "Arial"
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 要使用的字体的名称或用逗号分隔的字体名称列表。
+         * @default "Arial"
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        fontFamily: string;
+        $setFontFamily(value: string): boolean;
+        /**
+         * The size in pixels of text
+         * @default 30
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 文本的字号大小。
+         * @default 30
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        size: number;
+        $setSize(value: number): boolean;
+        /**
+         * Specifies whether the text is boldface.
+         * @default false
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 是否显示为粗体。
+         * @default false
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        bold: boolean;
+        $setBold(value: boolean): boolean;
+        /**
+         * Determines whether the text is italic font.
+         * @default false
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 是否显示为斜体。
+         * @default false
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        italic: boolean;
+        $setItalic(value: boolean): boolean;
+        /**
+         * @private
+         *
+         */
+        private invalidateFontString();
+        /**
+         * Horizontal alignment of text.
+         * @default：egret.HorizontalAlign.LEFT
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 文本的水平对齐方式。
+         * @default：egret.HorizontalAlign.LEFT
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        textAlign: string;
+        $setTextAlign(value: string): boolean;
+        /**
+         * Vertical alignment of text.
+         * @default：egret.VerticalAlign.TOP
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 文字的垂直对齐方式。
+         * @default：egret.VerticalAlign.TOP
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        verticalAlign: string;
+        $setVerticalAlign(value: string): boolean;
+        /**
+         * An integer representing the amount of vertical space between lines.
+         * @default 0
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 一个整数，表示行与行之间的垂直间距量
+         * @default 0
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        lineSpacing: number;
+        $setLineSpacing(value: number): boolean;
+        /**
+         * Color of the text.
+         * @default 0x000000
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 文本颜色
+         * @default 0x000000
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        textColor: number;
+        $setTextColor(value: number): boolean;
+        /**
+         * A Boolean value that indicates whether the text field word wrap. If the value is true, then the text field by word wrap;
+         * if the value is false, the text field by newline characters.
+         * @default false
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 一个布尔值，表示文本字段是否按单词换行。如果值为 true，则该文本字段按单词换行；
+         * 如果值为 false，则该文本字段按字符换行。
+         * @default false
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        wordWrap: boolean;
+        $setWordWrap(value: boolean): void;
+        protected inputUtils: InputController;
+        /**
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * Type of the text field.
+         * Any one of the following TextFieldType constants: TextFieldType.DYNAMIC (specifies the dynamic text field that users can not edit), or TextFieldType.INPUT (specifies the dynamic text field that users can edit).
+         * @default egret.TextFieldType.DYNAMIC
+         * @language en_US
+         */
+        /**
+         * 文本字段的类型。
+         * 以下 TextFieldType 常量中的任一个：TextFieldType.DYNAMIC（指定用户无法编辑的动态文本字段），或 TextFieldType.INPUT（指定用户可以编辑的输入文本字段）。
+         * @default egret.TextFieldType.DYNAMIC
+         * @language zh_CN
+         */
+        type: string;
+        /**
+         * @private
+         *
+         * @param value
+         */
+        $setType(value: string): boolean;
+        /**
+         * @version Egret 3.1.2
+         * @platform Web,Native
+         */
+        /**
+         * Pop-up keyboard type.
+         * Any of a TextFieldInputType constants.
+         * @language en_US
+         */
+        /**
+         * 弹出键盘的类型。
+         * TextFieldInputType 常量中的任一个。
+         * @language zh_CN
+         */
+        inputType: string;
+        /**
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * Serve as a string of the current text field in the text
+         * @language en_US
+         */
+        /**
+         * 作为文本字段中当前文本的字符串
+         * @language zh_CN
+         */
+        text: string;
+        /**
+         * @private
+         *
+         * @returns
+         */
+        $getText(): string;
+        /**
+         * @private
+         *
+         * @param value
+         */
+        $setBaseText(value: string): boolean;
+        /**
+         * @private
+         *
+         * @param value
+         */
+        $setText(value: string): boolean;
+        /**
+         * Specify whether the text field is a password text field.
+         * If the value of this property is true, the text field is treated as a password text field and hides the input characters using asterisks instead of the actual characters. If false, the text field is not treated as a password text field.
+         * @default false
+         * @language en_US
+         */
+        /**
+         * 指定文本字段是否是密码文本字段。
+         * 如果此属性的值为 true，则文本字段被视为密码文本字段，并使用星号而不是实际字符来隐藏输入的字符。如果为 false，则不会将文本字段视为密码文本字段。
+         * @default false
+         * @language zh_CN
+         */
+        displayAsPassword: boolean;
+        /**
+         * @private
+         *
+         * @param value
+         */
+        $setDisplayAsPassword(value: boolean): boolean;
+        /**
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * Represent the stroke color of the text.
+         * Contain three 8-bit numbers with RGB color components; for example, 0xFF0000 is red, 0x00FF00 is green.
+         * @default 0x000000
+         * @language en_US
+         */
+        /**
+         * 表示文本的描边颜色。
+         * 包含三个 8 位 RGB 颜色成分的数字；例如，0xFF0000 为红色，0x00FF00 为绿色。
+         * @default 0x000000
+         * @language zh_CN
+         */
+        strokeColor: number;
+        /**
+         * @private
+         *
+         * @param value
+         */
+        $setStrokeColor(value: number): boolean;
+        /**
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * Indicate the stroke width.
+         * 0 means no stroke.
+         * @default 0
+         * @language en_US
+         */
+        /**
+         * 表示描边宽度。
+         * 0为没有描边。
+         * @default 0
+         * @language zh_CN
+         */
+        stroke: number;
+        /**
+         * @private
+         *
+         * @param value
+         */
+        $setStroke(value: number): boolean;
+        /**
+         * The maximum number of characters that the text field can contain, as entered by a user. \n A script can insert more text than maxChars allows; the maxChars property indicates only how much text a user can enter. If the value of this property is 0, a user can enter an unlimited amount of text.
+         * The default value is 0.
+         * @default 0
+         * @language en_US
+         */
+        /**
+         * 文本字段中最多可包含的字符数（即用户输入的字符数）。
+         * 脚本可以插入比 maxChars 允许的字符数更多的文本；maxChars 属性仅表示用户可以输入多少文本。如果此属性的值为 0，则用户可以输入无限数量的文本。
+         * @default 0
+         * @language zh_CN
+         */
+        maxChars: number;
+        /**
+         * @private
+         *
+         * @param value
+         */
+        $setMaxChars(value: number): boolean;
+        /**
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * Vertical position of text in a text field. scrollV property helps users locate specific passages in a long article, and create scrolling text fields.
+         * Vertically scrolling units are lines, and horizontal scrolling unit is pixels.
+         * If the first displayed line is the first line in the text field, scrollV is set to 1 (instead of 0).
+         * @language en_US
+         */
+        /**
+         * 文本在文本字段中的垂直位置。scrollV 属性可帮助用户定位到长篇文章的特定段落，还可用于创建滚动文本字段。
+         * 垂直滚动的单位是行，而水平滚动的单位是像素。
+         * 如果显示的第一行是文本字段中的第一行，则 scrollV 设置为 1（而非 0）。
+         * @language zh_CN
+         */
+        scrollV: number;
+        /**
+         * The maximum value of scrollV
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * scrollV 的最大值
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        readonly maxScrollV: number;
+        /**
+         * @private
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        readonly selectionBeginIndex: number;
+        /**
+         * @private
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        readonly selectionEndIndex: number;
+        /**
+         * @private
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        readonly caretIndex: number;
+        /**
+         * @private
+         *
+         * @param beginIndex
+         * @param endIndex
+         */
+        $setSelection(beginIndex: number, endIndex: number): boolean;
+        /**
+         * @private
+         *
+         * @returns
+         */
+        $getLineHeight(): number;
+        /**
+         * Number of lines of text.
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 文本行数。
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        readonly numLines: number;
+        /**
+         * Indicate whether field is a multiline text field. Note that this property is valid only when the type is TextFieldType.INPUT.
+         * If the value is true, the text field is multiline; if the value is false, the text field is a single-line text field. In a field of type TextFieldType.INPUT, the multiline value determines whether the Enter key creates a new line (a value of false, and the Enter key is ignored).
+         * @default false
+         * @language en_US
+         */
+        /**
+         * 表示字段是否为多行文本字段。注意，此属性仅在type为TextFieldType.INPUT时才有效。
+         * 如果值为 true，则文本字段为多行文本字段；如果值为 false，则文本字段为单行文本字段。在类型为 TextFieldType.INPUT 的字段中，multiline 值将确定 Enter 键是否创建新行（如果值为 false，则将忽略 Enter 键）。
+         * @default false
+         * @language zh_CN
+         */
+        multiline: boolean;
+        /**
+         * @private
+         *
+         * @param value
+         */
+        $setMultiline(value: boolean): boolean;
+        /**
+         * Indicates a user can enter into the text field character set. If you restrict property is null, you can enter any character. If you restrict property is an empty string, you can not enter any character. If you restrict property is a string of characters, you can enter only characters in the string in the text field. The string is scanned from left to right. You can use a hyphen (-) to specify a range. Only restricts user interaction; a script may put any text into the text field. <br/>
+                  * If the string of characters caret (^) at the beginning, all characters are initially accepted, then the string are excluded from receiving ^ character. If the string does not begin with a caret (^) to, any characters are initially accepted and then a string of characters included in the set of accepted characters. <br/>
+                  * The following example allows only uppercase characters, spaces, and numbers in the text field: <br/>
+                  * My_txt.restrict = "A-Z 0-9"; <br/>
+                  * The following example includes all characters except lowercase letters: <br/>
+                  * My_txt.restrict = "^ a-z"; <br/>
+                  * If you need to enter characters \ ^, use two backslash "\\ -" "\\ ^": <br/>
+                  * Can be used anywhere in the string ^ to rule out including characters and switch between characters, but can only be used to exclude a ^. The following code includes only uppercase letters except uppercase Q: <br/>
+                  * My_txt.restrict = "A-Z ^ Q"; <br/>
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @default null
+         * @language en_US
+         */
+        /**
+         * 表示用户可输入到文本字段中的字符集。如果 restrict 属性的值为 null，则可以输入任何字符。如果 restrict 属性的值为空字符串，则不能输入任何字符。如果 restrict 属性的值为一串字符，则只能在文本字段中输入该字符串中的字符。从左向右扫描该字符串。可以使用连字符 (-) 指定一个范围。只限制用户交互；脚本可将任何文本放入文本字段中。<br/>
+         * 如果字符串以尖号 (^) 开头，则先接受所有字符，然后从接受字符集中排除字符串中 ^ 之后的字符。如果字符串不以尖号 (^) 开头，则最初不接受任何字符，然后将字符串中的字符包括在接受字符集中。<br/>
+         * 下例仅允许在文本字段中输入大写字符、空格和数字：<br/>
+         * my_txt.restrict = "A-Z 0-9";<br/>
+         * 下例包含除小写字母之外的所有字符：<br/>
+         * my_txt.restrict = "^a-z";<br/>
+         * 如果需要输入字符 \ ^，请使用2个反斜杠 "\\-" "\\^" ：<br/>
+         * 可在字符串中的任何位置使用 ^，以在包含字符与排除字符之间进行切换，但是最多只能有一个 ^ 用来排除。下面的代码只包含除大写字母 Q 之外的大写字母：<br/>
+         * my_txt.restrict = "A-Z^Q";<br/>
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @default null
+         * @language zh_CN
+         */
+        restrict: string;
+        /**
+         * @private
+         *
+         * @param value
+         */
+        $setWidth(value: number): boolean;
+        /**
+         * @private
+         *
+         * @param value
+         */
+        $setHeight(value: number): boolean;
+        /**
+         * @private
+         * 获取显示宽度
+         */
+        $getWidth(): number;
+        /**
+         * @private
+         * 获取显示宽度
+         */
+        $getHeight(): number;
+        /**
+         * @private
+         */
+        private textNode;
+        /**
+         * @private
+         */
+        $graphicsNode: sys.GraphicsNode;
+        /**
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * Specifies whether the text field has a border.
+         * If true, the text field has a border. If false, the text field has no border.
+         * Use borderColor property to set the border color.
+         * @default false
+         * @language en_US
+         */
+        /**
+         * 指定文本字段是否具有边框。
+         * 如果为 true，则文本字段具有边框。如果为 false，则文本字段没有边框。
+         * 使用 borderColor 属性来设置边框颜色。
+         * @default false
+         * @language zh_CN
+         */
+        border: boolean;
+        /**
+         * @private
+         */
+        $setBorder(value: boolean): void;
+        /**
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * The color of the text field border.
+         * Even currently is no border can be retrieved or set this property, but only if the text field has the border property is set to true, the color is visible.
+         * @default 0x000000
+         * @language en_US
+         */
+        /**
+         * 文本字段边框的颜色。
+         * 即使当前没有边框，也可检索或设置此属性，但只有当文本字段已将 border 属性设置为 true 时，才可以看到颜色。
+         * @default 0x000000
+         * @language zh_CN
+         */
+        borderColor: number;
+        /**
+         * @private
+         */
+        $setBorderColor(value: number): void;
+        /**
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * Specifies whether the text field has a background fill.
+         * If true, the text field has a background fill. If false, the text field has no background fill.
+         * Use the backgroundColor property to set the background color of the text field.
+         * @default false
+         * @language en_US
+         */
+        /**
+         * 指定文本字段是否具有背景填充。
+         * 如果为 true，则文本字段具有背景填充。如果为 false，则文本字段没有背景填充。
+         * 使用 backgroundColor 属性来设置文本字段的背景颜色。
+         * @default false
+         * @language zh_CN
+         */
+        background: boolean;
+        /**
+         * @private
+         */
+        $setBackground(value: boolean): void;
+        /**
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * Color of the text field background.
+         * Even currently is no background, can be retrieved or set this property, but only if the text field has the background property set to true, the color is visible.
+         * @default 0xFFFFFF
+         * @language en_US
+         */
+        /**
+         * 文本字段背景的颜色。
+         * 即使当前没有背景，也可检索或设置此属性，但只有当文本字段已将 background 属性设置为 true 时，才可以看到颜色。
+         * @default 0xFFFFFF
+         * @language zh_CN
+         */
+        backgroundColor: number;
+        /**
+         * @private
+         */
+        $setBackgroundColor(value: number): void;
+        /**
+         * @private
+         *
+         */
+        private fillBackground(lines?);
+        /**
+         * Enter the text automatically entered into the input state, the input type is text only and may only be invoked in the user interaction.
+         * @version Egret 3.0.8
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 输入文本自动进入到输入状态，仅在类型是输入文本并且是在用户交互下才可以调用。
+         * @version Egret 3.0.8
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        setFocus(): void;
+        /**
+         * @private
+         *
+         */
+        $onRemoveFromStage(): void;
+        /**
+         * @private
+         *
+         * @param stage
+         * @param nestLevel
+         */
+        $onAddToStage(stage: Stage, nestLevel: number): void;
+        $invalidateTextField(): void;
+        $getRenderBounds(): Rectangle;
+        /**
+         * @private
+         */
+        $measureContentBounds(bounds: Rectangle): void;
+        $updateRenderNode(): void;
+        /**
+         * @private
+         */
+        private isFlow;
+        /**
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * Set rich text
+         * @language en_US
+         */
+        /**
+         * 设置富文本
+         * @see http://edn.egret.com/cn/index.php/article/index/id/146
+         * @language zh_CN
+         */
+        textFlow: Array<egret.ITextElement>;
+        /**
+         * @private
+         *
+         * @param text
+         * @returns
+         */
+        private changeToPassText(text);
+        /**
+         * @private
+         */
+        private textArr;
+        /**
+         * @private
+         *
+         * @param textArr
+         */
+        private setMiddleStyle(textArr);
+        /**
+         * Get the text measured width
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 获取文本测量宽度
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        readonly textWidth: number;
+        /**
+         * Get Text measuring height
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 获取文本测量高度
+         * @version Egret 2.4
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        readonly textHeight: number;
+        /**
+         * @private
+         * @param text
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        appendText(text: string): void;
+        /**
+         * @private
+         * @param element
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        appendElement(element: egret.ITextElement): void;
+        /**
+         * @private
+         */
+        private linesArr;
+        $getLinesArr(): Array<egret.ILineElement>;
+        /**
+         * @private
+         *
+         * @returns
+         */
+        $getLinesArr2(): Array<egret.ILineElement>;
+        /**
+         * @private
+         */
+        $isTyping: boolean;
+        /**
+         * @private
+         */
+        $setIsTyping(value: boolean): void;
+        /**
+         * @private
+         * 返回要绘制的下划线列表
+         */
+        private drawText();
+        private addEvent();
+        private removeEvent();
+        private onTapHandler(e);
+    }
+    interface TextField {
+        addEventListener<Z>(type: "link", listener: (this: Z, e: TextEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
+        addEventListener<Z>(type: "focusIn" | "focusOut", listener: (this: Z, e: FocusEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
+        addEventListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number): any;
+    }
 }
 declare namespace egret {
     /**
@@ -15356,90 +15316,56 @@ declare namespace egret {
      */
     function toColorString(value: number): string;
 }
-declare namespace egret.sys {
+/**
+ * @private
+ */
+interface PlayerOption {
     /**
-     * @private
-     * 共享的用于碰撞检测的渲染缓冲
+     * 入口类完整类名
      */
-    let customHitTestBuffer: sys.RenderBuffer;
+    entryClassName?: string;
     /**
-     * @private
-     * 共享的用于canvas碰撞检测的渲染缓冲
+     * 默认帧率
      */
-    let canvasHitTestBuffer: sys.RenderBuffer;
+    frameRate?: number;
     /**
-     * @private
-     * 渲染缓冲
+     * 屏幕适配模式
      */
-    interface RenderBuffer {
-        /**
-         * 呈现最终绘图结果的画布。
-         * @readOnly
-         */
-        surface: any;
-        /**
-         * 渲染上下文。
-         * @readOnly
-         */
-        context: any;
-        /**
-         * 渲染缓冲的宽度，以像素为单位。
-         * @readOnly
-         */
-        width: number;
-        /**
-         * 渲染缓冲的高度，以像素为单位。
-         * @readOnly
-         */
-        height: number;
-        /**
-         * 改变渲染缓冲的大小并清空缓冲区
-         * @param width 改变后的宽
-         * @param height 改变后的高
-         * @param useMaxSize 若传入true，则将改变后的尺寸与已有尺寸对比，保留较大的尺寸。
-         */
-        resize(width: number, height: number, useMaxSize?: boolean): void;
-        /**
-         * 获取指定区域的像素
-         */
-        getPixels(x: number, y: number, width?: number, height?: number): number[];
-        /**
-         * 转换成base64字符串，如果图片（或者包含的图片）跨域，则返回null
-         * @param type 转换的类型，如: "image/png","image/jpeg"
-         */
-        toDataURL(type?: string, ...args: any[]): string;
-        /**
-         * 清空缓冲区数据
-         */
-        clear(): void;
-        /**
-         * 销毁渲染缓冲
-         */
-        destroy(): void;
-    }
+    scaleMode?: string;
     /**
-     * @private
+     * 初始内容宽度
      */
-    let RenderBuffer: {
-        /**
-         * 创建一个RenderTarget。
-         * 注意：若内存不足或创建缓冲区失败，将会抛出错误异常。
-         * @param width 渲染缓冲的初始宽
-         * @param height 渲染缓冲的初始高
-         * @param root 是否为舞台buffer
-         */
-        new (width?: number, height?: number, root?: boolean): RenderBuffer;
-    };
+    contentWidth?: number;
     /**
-     * @private
+     * 初始内容高度
      */
-    let CanvasRenderBuffer: {
-        /**
-         * 创建一个CanvasRenderBuffer。
-         * 注意：若内存不足或创建缓冲区失败，将会抛出错误异常。
-         * @param width 渲染缓冲的初始宽
-         * @param height 渲染缓冲的初始高
-         */
-        new (width?: number, height?: number): RenderBuffer;
-    };
+    contentHeight?: number;
+    /**
+     * 屏幕方向
+     */
+    orientation?: string;
+    /**
+     * 显示FPS
+     */
+    showFPS?: boolean;
+    /**
+     *
+     */
+    fpsStyles?: Object;
+    /**
+     * 显示日志
+     */
+    showLog?: boolean;
+    /**
+     * 过滤日志的正则表达式
+     */
+    logFilter?: string;
+    /**
+     *
+     */
+    maxTouches?: number;
+    /**
+     *
+     */
+    textureScaleFactor?: number;
 }

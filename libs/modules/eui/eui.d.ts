@@ -1104,8 +1104,6 @@ declare namespace eui.sys {
         layoutWidthExplicitlySet = 27,
         layoutHeightExplicitlySet = 28,
         initialized = 29,
-        anchorPercentX = 30,
-        anchorPercentY = 31,
     }
     /**
      * @private

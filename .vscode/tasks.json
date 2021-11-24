@@ -1,10 +1,19 @@
 {
-   "version": "0.1.0",
-   "command": "egret",
-   "isShellCommand": true,
-   "showOutput": "silent",
-   "args": [
-      "build"
-   ],
-   "problemMatcher": "$tsc"
+	"version": "2.0.0",
+	"command": "egret",
+	"args": ["build"],
+	"problemMatcher": "$tsc",
+	"tasks": [
+		{
+			"label": "egret",
+			"type": "shell",
+			"command": "egret",
+			"args": ["build"],
+			"problemMatcher": "$tsc",
+			"group": {
+				"_id": "build",
+				"isDefault": false
+			}
+		}
+	]
 }

@@ -1,12 +1,12 @@
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
-var __extends = this && this.__extends || function __extends(t, e) { 
- function r() { 
- this.constructor = t;
-}
-for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
-r.prototype = e.prototype, t.prototype = new r();
+var __extends = this && this.__extends || function __extends(t, e) {
+    function r() {
+        this.constructor = t;
+    }
+    for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
+    r.prototype = e.prototype, t.prototype = new r();
 };
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1065,8 +1065,6 @@ var eui;
                     27: false,
                     28: false,
                     29: false,
-                    30: NaN,
-                    31: NaN,
                 };
                 this.$includeInLayout = true;
                 //if egret
@@ -7671,7 +7669,6 @@ var eui;
                     }
                 }
                 else {
-                    xmlData = egret.XML.parse(text);
                 }
                 var hasClass = false;
                 var className = "";
@@ -7697,7 +7694,6 @@ var eui;
                     }
                 }
                 else {
-                    clazz = geval(code);
                 }
                 if (hasClass && clazz) {
                     egret.registerClass(clazz, className);
@@ -21470,7 +21466,10 @@ var eui;
                 else {
                     name = ns.substring(0, ns.length - 1) + id;
                 }
-                if (!getPrototypeOf(name)) {
+                var a = false;
+                if(id === "BagView")
+                    a = true
+                if (!getPrototypeOf(name,a)) {
                     name = "";
                 }
                 return name;
@@ -21537,8 +21536,8 @@ var eui;
          * @private
          * 获取一个类名对应的prototype引用
          */
-        function getPrototypeOf(className) {
-            var clazz = egret.getDefinitionByName(className);
+        function getPrototypeOf(className,a) {
+            var clazz = egret.getDefinitionByName(className,a);
             if (!clazz) {
                 return null;
             }
@@ -21563,7 +21562,6 @@ var eui;
                 }
             }
             else {
-                instance = new clazz();
             }
             return instance;
         }
