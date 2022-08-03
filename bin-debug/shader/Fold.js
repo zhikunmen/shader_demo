@@ -54,8 +54,8 @@ var Fold = (function (_super) {
         var _this = this;
         var content = new eui.Image('bg_jpg');
         var stage = egret.MainContext.instance.stage;
-        this.setWH(stage.stageWidth, stage.stageHeight);
-        content.setWH(this.width, this.height);
+        this.width = content.width = stage.stageWidth;
+        this.height = content.height = stage.stageHeight;
         this.addChild(content);
         this.initShader(content);
         this.text = new eui.Label();

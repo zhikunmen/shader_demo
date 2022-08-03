@@ -54,7 +54,8 @@ var Fade = (function (_super) {
         var _this = this;
         var content = new eui.Image('resource/assets/loding_candy.png');
         var stage = egret.MainContext.instance.stage;
-        this.setWH(stage.stageWidth, stage.stageHeight);
+        this.width = stage.stageWidth;
+        this.height = stage.stageHeight;
         content.horizontalCenter = content.verticalCenter = 0;
         this.addChild(content);
         this.initShader(content);

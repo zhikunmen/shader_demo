@@ -59,7 +59,8 @@ var Shake = (function (_super) {
         this.cells = [];
         for (var i = 1; i <= 5; i++) {
             var cell = new egret.Bitmap(RES.getRes("N" + i + "_png"));
-            cell.pos(300, 300 + i * 100);
+            cell.x = 300;
+            cell.y = 300 + i * 100;
             this.cells.push(cell);
             this.addChild(cell);
         }

@@ -87,10 +87,12 @@ var SinShader = (function (_super) {
                         img = new eui.Image('resource/assets/loding_candy.png');
                         this.addChild(img);
                         img.filters = [customFilter];
-                        img.pos(150, 400);
+                        img.x = 150;
+                        img.y = 400;
                         img1 = new eui.Image('resource/assets/loding_candy.png');
                         this.addChild(img1);
-                        img1.pos(150, 600);
+                        img1.x = 150;
+                        img1.y = 600;
                         return [2 /*return*/];
                 }
             });

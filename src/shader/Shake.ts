@@ -16,7 +16,8 @@ class Shake extends BaseEuiView {
         this.cells = [];
         for(let i = 1; i <= 5;i ++){
             const cell = new egret.Bitmap(RES.getRes(`N${i}_png`))
-            cell.pos(300,300 + i * 100);
+            cell.x = 300;
+            cell.y = 300 + i * 100;
             this.cells.push(cell);
             this.addChild(cell);
         }
